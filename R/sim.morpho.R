@@ -8,7 +8,7 @@
 #' all branches.
 #' @param tree A phylogenetic tree (class "phylo") with branches representing genetic distance.
 #' @param time.tree A phylogenetic tree (class "phylo") with branches representing time.
-#' @param k Number of trait states (integer ≥ 2). Can be a vector if using partitions.
+#' @param k Number of trait states (integer \eqn{\geq} 2). Can be a vector if using partitions.
 #' @param trait.num The total number of traits to simulate (integer > 0).
 #' @param partition Vector specifying the number of traits per partition.
 #' @param br.rates Clock rates per branch. Can be a single value (strict clock) or a vector of rates.
@@ -19,7 +19,7 @@
 #' Must specify the mean (meanlog) and standard deviation (sdlog) of the distribution as well as the number of
 #' categories (ACRV.ncats). When `user` specified, the user can provide their own rates of evolution (define.ACRV.rates).
 #' When `NULL` specified all traits are simulated under the same rate. Default is `NULL`.
-#' @param alpha.gamma Shape parameter α for the gamma distribution. Default set to 1.
+#' @param alpha.gamma Shape parameter \eqn{\alpha} for the gamma distribution. Default set to 1.
 #' @param ACRV.ncats Number of rate categories for among character rate variation.
 #' @param meanlog mean of the distribution on the log scale.
 #' @param sdlog standard deviation of the distribution on the log scale

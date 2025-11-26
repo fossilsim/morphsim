@@ -28,7 +28,7 @@ sim.morpho(
 
 \item{time.tree}{A phylogenetic tree (class "phylo") with branches representing time.}
 
-\item{k}{Number of trait states (integer ≥ 2). Can be a vector if using partitions.}
+\item{k}{Number of trait states (integer \eqn{\geq} 2). Can be a vector if using partitions.}
 
 \item{trait.num}{The total number of traits to simulate (integer > 0).}
 
@@ -44,7 +44,7 @@ Must specify the mean (meanlog) and standard deviation (sdlog) of the distributi
 categories (ACRV.ncats). When `user` specified, the user can provide their own rates of evolution (define.ACRV.rates).
 When `NULL` specified all traits are simulated under the same rate. Default is `NULL`.}
 
-\item{alpha.gamma}{Shape parameter α for the gamma distribution. Default set to 1.}
+\item{alpha.gamma}{Shape parameter \eqn{\alpha} for the gamma distribution. Default set to 1.}
 
 \item{ACRV.ncats}{Number of rate categories for among character rate variation.}
 
