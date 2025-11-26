@@ -116,45 +116,45 @@ sim.morpho <- function(tree = NULL,
                        fossil = NULL,
                        define.Q = NULL) {
 
-  if (is.null(tree) && is.null(time.tree)) stop("Must provide a tree object")
-  if (any(k < 2)) stop("Need to simulate at least 2 states")
-  if (is.null(trait.num)) stop("Specify the total number of traits to simulate")
+  if (is.null(tree) && is.null(time.tree)) stop("Error: Must provide a tree object")
+  if (any(k < 2)) stop("Error: Need to simulate at least 2 states")
+  if (is.null(trait.num)) stop("Error: Specify the total number of traits to simulate")
 
   if (ACRV == "user" && !is.null(define.ACRV.rates)) {
-    stop("Need to provide a vector of rates if ACRV is set to 'user'")
+    stop("Error: Need to provide a vector of rates if ACRV is set to 'user'")
   }
 
   if (is.null(partition) && length(k) != 1) {
-    stop("Data being simulated under 1 partition, supply 1 character state for k")
+    stop("Error: Data being simulated under 1 partition, supply 1 character state for k")
   }
 
   if (!is.null(partition) && length(k) != length(partition)) {
-    stop("Need to specify maximum character state for each partition")
+    stop("Error: Need to specify maximum character state for each partition")
   }
 
   if (!is.null(partition) && sum(partition) != trait.num) {
-    stop("The total number characters in partitions and trait.num must match")
+    stop("Error: The total number characters in partitions and trait.num must match")
   }
 
   if (!is.null(define.Q)) {
-    if (!is.matrix(define.Q)) stop("`define.Q` must be a matrix.")
-    if (nrow(define.Q) != ncol(define.Q)) stop("`define.Q` must be square.")
+    if (!is.matrix(define.Q)) stop("Error: `define.Q` must be a matrix.")
+    if (nrow(define.Q) != ncol(define.Q)) stop("Error: `define.Q` must be square.")
     if (any(abs(rowSums(define.Q)) > 1e-6)) {
-      stop("Incorrect Q matrix specified: rows must sum to zero.")
+      stop("Error: Incorrect Q matrix specified: rows must sum to zero.")
     }
   }
 
-  if (!is.logical(variable)) stop("`variable` must be TRUE or FALSE.")
-  if (!is.logical(ancestral)) stop("`ancestral` must be TRUE or FALSE.")
+  if (!is.logical(variable)) stop("Error: `variable` must be TRUE or FALSE.")
+  if (!is.logical(ancestral)) stop("Error: `ancestral` must be TRUE or FALSE.")
   if (!is.null(fossil) && !FossilSim::is.fossils(fossil)) {
-    stop("`fossil` must be a FossilSim object.")
+    stop("Error: `fossil` must be a FossilSim object.")
   }
 
   ## if provided with time tree, need to transform branches in genetic distance
   if (is.null(tree) && !is.null(time.tree)) {
     tree <- time.tree
     if (is.null(br.rates)) {
-      print("No branch rate provided, using default of 0.1 for all branches")
+      print("Warning: No branch rate provided, using default of 0.1 for all branches")
       br.rates <- rep(0.1, length(tree$edge.length))
     }
     if (length(br.rates) == 1) {

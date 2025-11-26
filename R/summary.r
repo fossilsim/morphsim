@@ -25,6 +25,10 @@
 #' summary <- stats.morpho(data = morpho_data)
 stats.morpho <- function(data){
 
+  if (is.null(data) || !inherits(data, "morpho")) {
+    stop("Error: `data` must be a morpho object.")
+  }
+
   morpho_summary <- vector("list", 3)
   names(morpho_summary) <- c("Statistics", "Convergent_Traits", "Tree")
 
@@ -81,6 +85,10 @@ stats.morpho <- function(data){
 #' @return A data.frame listing convergent traits, their state, and number of transitions
 #' @export
 convergent_evol <- function(data = NULL) {
+
+  if (is.null(data) || !inherits(data, "morpho")) {
+    stop("Error: `data` must be a morpho object.")
+  }
 
   dat <- data[["transition_history"]]
   tree <- data$trees$EvolTree
@@ -223,12 +231,12 @@ find_path_to_tip <- function(tree, tip) {
 #' combined <- combine.morpho(morpho1, morpho2)
 combine.morpho <- function(x, y) {
 
-  if (!inherits(x, "morpho")) stop("x must be a 'morpho' object")
-  if (!inherits(y, "morpho")) stop("y must be a 'morpho' object")
-  if (!identical(x$fossil, y$fossil)) stop("morpho objects have different fossil objects")
+  if (!inherits(x, "morpho")) stop("Error: x must be a 'morpho' object")
+  if (!inherits(y, "morpho")) stop("Error: y must be a 'morpho' object")
+  if (!identical(x$fossil, y$fossil)) stop("Error: morpho objects have different fossil objects")
   if (!phangorn::RF.dist(x$trees$EvolTree,
-                         y$trees$EvolTree) == 0) stop("morpho objects have different trees")
-  if (!identical(x$trees$BrRates, y$trees$BrRate)) stop("morpho objects have different branch lengths")
+                         y$trees$EvolTree) == 0) stop("Error: morpho objects have different trees")
+  if (!identical(x$trees$BrRates, y$trees$BrRate)) stop("Error: morpho objects have different branch lengths")
 
   combined_tips <- list()
   tip_names <- names(x$sequences$tips)
@@ -310,8 +318,8 @@ combine.morpho <- function(x, y) {
 #' re <- get_reconstructed(morpho_data)
 #'
 get.reconstructed <- function(data) {
-  if (!is.morpho(data)) stop ("must provide a morpho object")
-  if (is.null(data$fossil)) stop ("must provide a morpho object with fossil information")
+  if (!is.morpho(data)) stop ("Error: must provide a morpho object")
+  if (is.null(data$fossil)) stop ("Error: must provide a morpho object with fossil information")
 
   r_tree <- FossilSim::reconstructed.tree.fossils.objects(fossils  = data$fossil,
                                                         tree = data$trees$TimeTree,

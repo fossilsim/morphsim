@@ -12,7 +12,15 @@
 #' }
 #' @export
 #'
-write.recon.tree <- function (data, file) {
+write.recon.tree <- function (data = NULL, file = NULL) {
+
+  if (is.null(data) || !inherits(data, "morpho")) {
+    stop("Error: `data` must be a morpho object.")
+  }
+
+  if (is.null(file)) stop("Error: No file name specified")
+
+  if(is.null(data$fossil)) stop ("Error: Cannot reconstruct tree as no fossil data in morpho object")
 
   r_tree <- FossilSim::reconstructed.tree.fossils.objects(fossils  = data$fossil,
                                                           tree = data$trees$TimeTree,
@@ -34,6 +42,14 @@ write.recon.tree <- function (data, file) {
 #' @export
 #'
 write.recon.matrix <- function (data, file = NULL) {
+
+  if (is.null(data) || !inherits(data, "morpho")) {
+    stop("Error: `data` must be a morpho object.")
+  }
+
+  if (is.null(file)) stop("Error: No file name specified")
+  if(is.null(data$fossil)) stop ("Error: Cannot reconstruct tree as no fossil data in morpho object")
+
 
   mat <- reconstruct.matrix(data)
   ape::write.nexus.data(mat, file = file, format = "standard")
@@ -59,6 +75,12 @@ write.recon.matrix <- function (data, file = NULL) {
 #'}
 #' @export
 write.tsv <- function (data, file, uncertainty = 0) {
+
+  if (is.null(data) || !inherits(data, "morpho")) {
+    stop("Error: `data` must be a morpho object.")
+  }
+
+  if (is.null(file)) stop("Error: No file name specified")
 
   ## ages of full tree
   tip_depths <- ape::node.depth.edgelength(data$trees$TimeTree)[1:length(data$trees$TimeTree$tip.label)]
@@ -98,6 +120,15 @@ write.tsv <- function (data, file, uncertainty = 0) {
 #' @export
 
 write.recon.tsv <- function (data, file, uncertainty = 0){
+
+  if (is.null(data) || !inherits(data, "morpho")) {
+    stop("Error: `data` must be a morpho object.")
+  }
+
+  if (is.null(file)) stop("Error: No file name specified")
+
+  if(is.null(data$fossil)) stop ("Error: Cannot reconstruct tree as no fossil data in morpho object")
+
 
   r_tree <- FossilSim::reconstructed.tree.fossils.objects(fossils  = data$fossil,
                                                           tree = data$trees$TimeTree,
@@ -178,7 +209,8 @@ write.recon.tsv <- function (data, file, uncertainty = 0){
 #'
 morphsim_fossilsim <- function (data = NULL){
 
-  if(is.null(data$fossil)) stop("Morpho object does not contian fossils")
+
+  if(is.null(data$fossil)) stop("Error: Morpho object does not contian fossils")
 
   r_tree <- FossilSim::reconstructed.tree.fossils.objects(fossils  = data$fossil,
                                                           tree = data$trees$TimeTree,

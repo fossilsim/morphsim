@@ -63,35 +63,35 @@ plot.morpho <- function(x = NULL,
                         ...) {
 
   if (is.null(x)) {
-    stop("'x' cannot be NULL. Please provide a morpho object.")
+    stop("Error: 'x' cannot be NULL. Please provide a morpho object.")
   }
   if (!is.morpho(x) || is.null(x$trees)) {
-    stop("'x' must be a morpho object containing a 'trees' element.")
+    stop("Error: 'x' must be a morpho object containing a 'trees' element.")
   }
 
   if (!is.null(trait) && (!is.numeric(trait) || length(trait) != 1)) {
-    stop("'trait' must be a single numeric value or NULL.")
+    stop("Error: 'trait' must be a single numeric value or NULL.")
   }
   if (!is.null(trait) && trait > length(x$transition_history)) {
-    stop(paste0("'trait' index (", trait, ") is out of range. The object has only ",
+    stop(paste0("Error: 'trait' index (", trait, ") is out of range. The object has only ",
                 length(x$transition_history), " traits."))
   }
 
   if (!is.logical(timetree) || length(timetree) != 1) {
-    stop("'timetree' must be TRUE or FALSE.")
+    stop("Error: 'timetree' must be TRUE or FALSE.")
   }
   if (!is.logical(show.fossil) || length(show.fossil) != 1) {
-    stop("'fossil' must be TRUE or FALSE.")
+    stop("Error: 'fossil' must be TRUE or FALSE.")
   }
   if (!is.logical(root.edge) || length(root.edge) != 1) {
-    stop("'root.edge' must be TRUE or FALSE.")
+    stop("Error: 'root.edge' must be TRUE or FALSE.")
   }
   if (!is.logical(reconstructed) || length(reconstructed) != 1) {
-    stop("'reconstructed' must be TRUE or FALSE.")
+    stop("Error: 'reconstructed' must be TRUE or FALSE.")
   }
 
   if (show.fossil && is.null(x$fossil)) {
-    stop("No fossil data found in 'x', but 'fossil = TRUE' was requested.")
+    stop("Error: No fossil data found in 'x', but 'fossil = TRUE' was requested.")
   }
 
   data <- x

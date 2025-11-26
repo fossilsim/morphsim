@@ -74,42 +74,46 @@
 
 sim.missing.data <- function(data = NULL, seq = NULL, method = NULL, probability = NULL,
                              traits = NULL, taxa = NULL){
-  
-  
+
+
   #### Checks
   if (is.null(method) || !method %in% c("random", "partition", "rate", "trait", "taxa", "extinct")) {
-    stop("You must specify a `method`: 'random', 'partition', 'rate', 'trait', extinct, or 'taxa'.")
+    stop("Error: must specify a `method`: 'random', 'partition', 'rate', 'trait', extinct, or 'taxa'.")
   }
-  
+
   if (is.null(data) || !inherits(data, "morpho")) {
-    stop("`data` must be a morpho object.")
+    stop("Error: `data` must be a morpho object.")
   }
   if (is.null(seq) || !seq %in% c("tips", "nodes", "SA")) {
-    stop("`seq` must be one of 'tips', 'nodes', or 'SA'.")
+    stop("Error: `seq` must be one of 'tips', 'nodes', or 'SA'.")
   }
   if (is.null(probability)) {
-    stop("You must provide a `probability` value.")
+    stop("Error: You must provide a `probability` value.")
   }
   if (!is.numeric(probability) || any(probability < 0 | probability > 1)) {
-    stop("`probability` must be between 0 and 1.")
+    stop("Error: `probability` must be between 0 and 1.")
   }
-  
+
   if(method == "rate" && !is.null(data$combined)){
-    stop ("Cannot use rates on data sets that are combined from different models.
+    stop ("Error: Cannot use rates on data sets that are combined from different models.
           Simulate missing data first and then combine.")
   }
-  
-  
+
+  if (method == "rate" && length(unique(re$model$RateVarTrait[1,])) != length(probability)){
+    stop("Error: Number of probabilities must match the number of rate categories used. See data$model$RateVarTrait" )
+  }
+
+
   ## Create data frame
   x <- t(as.data.frame(data$sequences[[seq]]))
   trait.num  <- length(x[1,])
   taxa.num <-   length(x[,1])
-  
+
   ## Method: Random
   if (method == "random"){
-    
+
     if (length(probability) > 1) stop("For method = 'random', provide a single probability.")
-    
+
     remove <- round((trait.num* taxa.num)* probability, 0)
     total_cells <- taxa.num*trait.num
     all_combinations <- expand.grid(Row = 1:taxa.num, Column = 1:trait.num)
@@ -118,67 +122,67 @@ sim.missing.data <- function(data = NULL, seq = NULL, method = NULL, probability
       x[random_cells$Row[i], random_cells$Column[i]] <- "?"
     }
   }
-  
-  
+
+
   ## Method: Rate
   if( method == "rate"){
     rates <-  data$model$RateVarTrait
     if (length(probability) != length(unique(rates[1, ]))) {
       stop("Length of `probability` must match the number of rate categories.")
     }
-    
+
     for ( j in 1:length(unique(rates[1, ]))){
-      
+
       traits_per_rate <- which(rates == unique(rates[1, ])[j])
       remove <- round((length(traits_per_rate)* taxa.num)* probability[j], 0)
       total_cells <- length(traits_per_rate)*taxa.num
-      
+
       all_combinations <- expand.grid(Row = 1:taxa.num,
                                       Column =  traits_per_rate)
       random_cells <- all_combinations[sample(1:total_cells,
                                               remove, replace = FALSE), ]
       for ( i in 1:remove){
         x[random_cells$Row[i], random_cells$Column[i]] <- "?"
-        
+
       }
     }
   }
-  
-  
+
+
   ## Method: Partition
   if(method == "partition"){
-    
+
     if (length(probability) != length(data$model)){
       stop("Vector of probabilities does not match the number of partitions")
     }
-    
+
     start_col <- 1
     for ( j in 1:length(data$model)){
       traits_per_partition <-  as.numeric(sub(".*Part:(\\d+).*", "\\1",
                                               data[["model"]][["Specified"]][j]))
       remove <- round((traits_per_partition* taxa.num)* probability[j], 0)
       total_cells <- traits_per_partition*taxa.num
-      
+
       all_combinations <- expand.grid(Row = 1:taxa.num,
                                       Column =  start_col:(start_col + traits_per_partition -1))
       random_cells <- all_combinations[sample(1:total_cells, remove, replace = FALSE), ]
-      
-      
+
+
       for ( i in 1:remove){
         x[random_cells$Row[i], random_cells$Column[i]] <- "?"
       }
       start_col <- start_col + traits_per_partition
     }
   }
-  
-  
+
+
   ## Method: Trait
   if ( method == "trait"){
     if (length(probability) > 1) {
       stop("For method = 'trait', provide a single probability.")
     }
     if (is.null(traits)) stop("For method = 'trait', you must specify `traits`.")
-    
+
     remove <- round((length(traits)* taxa.num)* probability, 0)
     total_cells <- length(traits)*taxa.num
     all_combinations <- expand.grid(Row = 1:taxa.num, Column = traits)
@@ -187,15 +191,15 @@ sim.missing.data <- function(data = NULL, seq = NULL, method = NULL, probability
       x[random_cells$Row[i], random_cells$Column[i]] <- "?"
     }
   }
-  
+
   ## Method: Taxa
   if ( method == "taxa"){
-    
+
     if (length(probability) > 1) {
       stop("For method = 'taxa', provide a single probability.")
     }
     if (is.null(taxa)) stop("For method = 'taxa', you must specify `taxa`.")
-    
+
     remove <- round((length(taxa)* trait.num)* probability, 0)
     total_cells <- length(taxa)* trait.num
     all_combinations <- expand.grid(Column = 1:trait.num,  Row = taxa)
@@ -204,19 +208,19 @@ sim.missing.data <- function(data = NULL, seq = NULL, method = NULL, probability
       x[as.character(random_cells$Row[i]), random_cells$Column[i]] <- "?"
     }
   }
-  
-  
+
+
   ## Method: = Extinct
   if ( method == "extinct"){
-    
+
     if (length(probability) > 1) {
       stop("For method = 'extinct', provide a single probability.")
     }
     if (seq != "tips") {
       stop("For method = extinct,`seq` must be 'tips'.")
     }
-    
-    
+
+
     ## number extant tips
     tip_depths <- ape::node.depth.edgelength(data$trees$TimeTree)[1:length(data$trees$TimeTree$tip.label)]
     tree_height <- max(ape::node.depth.edgelength(data$trees$TimeTree))
@@ -230,12 +234,12 @@ sim.missing.data <- function(data = NULL, seq = NULL, method = NULL, probability
       x[as.character(random_cells$Row[i]), random_cells$Column[i]] <- "?"
     }
   }
-  
+
   ## update morpho object
   tax <- rownames(x)
   for ( i in 1:length(tax)){
     data$sequences[[seq]][[tax[i]]] <- x[tax[i],]
-    
+
   }
   return(data)
 }
