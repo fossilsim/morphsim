@@ -17,24 +17,28 @@ Function to add the reconstructed tree and corresponding reconstructed
 matrix to an existing morpho object
 }
 \examples{
-#' # simulate a phylogenetic tree
-t = TreeSim::sim.bd.taxa(n = 5, numbsim = 1, lambda = 0.1, mu = 0.05)[[1]]
+# simulate tree
+lambda = 0.1
+mu = 0.05
+tips = 10
+t = TreeSim::sim.bd.taxa(n = tips, numbsim = 1, lambda = lambda, mu = mu)[[1]]
 
-# simulate fossil sampling
-f = FossilSim::sim.fossils.poisson(rate = 0.1, tree = t, root.edge = F)
-
-# simulate characters along the branches of the tree
-morpho_data <-  sim.morpho(tree = phy,
-                           k = c(2,3,4),
-                           trait.num = 20,
+# Simulate fossils and extant taxa
+rate = 0.1 # poisson sampling rate
+f = FossilSim::sim.fossils.poisson(rate = rate, tree = t, root.edge = FALSE)
+rho = 0.5
+f2 = FossilSim::sim.extant.samples(fossils = f, tree = t, rho = rho)
+morpho_data <-  sim.morpho(k = c(2,3),
+                           time.tree = t,
+                           trait.num = 6,
                            ancestral = TRUE,
-                           partition = c(10,5,5),
+                           br.rates = 0.1,
+                           partition = c(4,2),
                            ACRV = "gamma",
                            variable = TRUE,
                            ACRV.ncats = 4,
-                           define.Q = NULL,
-                           fossil = f)
+                           fossil = f2)
 
-re <- get_reconstructed(morpho_data)
+re <- get.reconstructed(morpho_data)
 
 }

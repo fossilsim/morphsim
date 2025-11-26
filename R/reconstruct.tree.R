@@ -97,7 +97,7 @@ reconstruct.tree <- function(data) {
 #' reconstructed tree.
 #'
 #' @param data A `morpho` object with fossil data
-reconstruct.matrix <- function( data = data){
+reconstruct.matrix <- function(data){
 
   if (!is.morpho(data)) stop ("Error: must provide a morpho object")
   if (is.null(data$fossil)) stop ("Error: need a fossil object for reconstruction")

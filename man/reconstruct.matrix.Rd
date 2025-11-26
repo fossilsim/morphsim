@@ -4,7 +4,7 @@
 \alias{reconstruct.matrix}
 \title{Get reconstructed matrix}
 \usage{
-reconstruct.matrix(data = data)
+reconstruct.matrix(data)
 }
 \arguments{
 \item{data}{A `morpho` object with fossil data}

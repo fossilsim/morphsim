@@ -36,7 +36,32 @@ plotMorphoGrid <- function(data = NULL,
                            num.trait = "all",
                            col =  c("lavender", "white", "lightskyblue1", "pink", "gold2", "forestgreen", "coral")){
 
-  old_par <- par(no.readonly = TRUE)
+
+  if (is.null(data)) stop("Error: 'data' cannot be NULL.")
+
+  if (!is.morpho(data)) stop("Error: 'data' must be a 'morpho'.")
+
+  if (!seq %in% c("tips", "recon")) {
+    stop("Error: 'seq' must be either 'tips' or 'recon'.")
+  }
+
+  if (!("transition_history" %in% names(data)) || length(data$transition_history) == 0) {
+    stop("Error: 'data' must contain a non-empty 'transition_history' element.")
+  }
+
+  n.traits.total <- length(data$transition_history)
+
+  if (!identical(num.trait, "all")) {
+    if (!is.numeric(num.trait) || length(num.trait) != 1 || num.trait < 1 || num.trait > n.traits.total) {
+      stop(paste0("Error: 'num.trait' must be 'all' or a numeric value between 1 and ", n.traits.total, "."))
+    }
+  }
+
+
+
+
+
+   old_par <- par(no.readonly = TRUE)
   on.exit(par(old_par))
 
   if (inherits(data$sequences[[seq]][[1]][1], "character")) {

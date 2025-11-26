@@ -4,7 +4,7 @@
 \alias{write.recon.tree}
 \title{Write reconstructed tree to file}
 \usage{
-write.recon.tree(data, file)
+write.recon.tree(data = NULL, file = NULL)
 }
 \arguments{
 \item{data}{Morpho object}

@@ -113,10 +113,11 @@ write.tsv <- function (data, file, uncertainty = 0) {
 #' @param uncertainty Numeric. Adds uncertainty to fossil ages in the morpho object.
 #'  The ages in the object are point estimates by default; setting `uncertainty`
 #'  will create an age range of ± this value (in millions of years).
-#'  #' @examples
+#' @examples
 #' \dontrun{
 #' write.recon.tsv(data = morpho_data, file = "recon_ages.tsv")
-#'}
+#' }
+#'
 #' @export
 
 write.recon.tsv <- function (data, file, uncertainty = 0){

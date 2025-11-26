@@ -12,14 +12,16 @@ write.recon.tsv(data, file, uncertainty = 0)
 \item{file}{File name}
 
 \item{uncertainty}{Numeric. Adds uncertainty to fossil ages in the morpho object.
- The ages in the object are point estimates by default; setting `uncertainty`
- will create an age range of ± this value (in millions of years).
- #' @examples
-\dontrun{
-write.recon.tsv(data = morpho_data, file = "recon_ages.tsv")
-}}
+The ages in the object are point estimates by default; setting `uncertainty`
+will create an age range of ± this value (in millions of years).}
 }
 \description{
 Writes the ages of the specimen in the reconstructed tree to a file. The tsv format used
 here is directly compatible with RevBayes
+}
+\examples{
+\dontrun{
+write.recon.tsv(data = morpho_data, file = "recon_ages.tsv")
+}
+
 }

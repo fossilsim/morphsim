@@ -99,7 +99,7 @@ sim.missing.data <- function(data = NULL, seq = NULL, method = NULL, probability
           Simulate missing data first and then combine.")
   }
 
-  if (method == "rate" && length(unique(re$model$RateVarTrait[1,])) != length(probability)){
+  if (method == "rate" && length(unique(data$model$RateVarTrait[1,])) != length(probability)){
     stop("Error: Number of probabilities must match the number of rate categories used. See data$model$RateVarTrait" )
   }
 

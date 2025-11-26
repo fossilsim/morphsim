@@ -20,5 +20,28 @@ model parameters, and transition histories, while ensuring tree and fossil
 consistency.
 }
 \examples{
+phy <- ape::rtree(10)
+
+# simulate characters along the branches of the tree
+morpho1 <-  sim.morpho(tree = phy,
+                           k = c(2,3,4),
+                           trait.num = 20,
+                           ancestral = TRUE,
+                           partition = c(10,5,5),
+                           ACRV = "gamma",
+                           variable = TRUE,
+                           ACRV.ncats = 4,
+                           define.Q = NULL)
+
+morpho2 <-  sim.morpho(tree = phy,
+                           k = c(2,3,4),
+                           trait.num = 20,
+                           ancestral = TRUE,
+                           partition = c(10,5,5),
+                           ACRV = "gamma",
+                           variable = TRUE,
+                           ACRV.ncats = 4,
+                           define.Q = NULL)
+
 combined <- combine.morpho(morpho1, morpho2)
 }
