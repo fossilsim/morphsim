@@ -1,9 +1,12 @@
 Package: MorphSim
 Type: Package
-Title: Simulate discrete character data along phylogenetic trees
+Title: Simulate Discrete Character Data along Phylogenetic Trees
 Version: 0.1.0
-Author: Laura Mulvey, Tim Brandler, Alessio Capobianco, Rachel Warnock, Joëlle Barido-Sottani
-Maintainer: Laura Mulvey <lauramulvey479@gmail.com>
+Authors@R: c(person(given = "Laura", family = "Mulvey", role = c("aut", "cre", "cph"), email = "lauramulvey479@gmail.com"),
+    person(given = "Tim", family = "Brandler",role=c("aut","cph")),
+    person(given = "Alessio", family = "Capobianco",role=c("aut","cph")),
+    person(given = "Rachel", family = "Warnock", role=c("aut","cph")),
+    person(given =  "Joelle", family = "Barido-Sottani", role=c("aut","cph")))
 Description: Simulate morphological traits along phylogenetic trees. This package works with phylogenetic trees that have branch lengths representing either evolutionary distance or time. It also provides functions to visualize evolutionary processes along trees and within morphological matrices.
 License: GPL-3
 Encoding: UTF-8
