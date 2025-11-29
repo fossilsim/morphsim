@@ -13,6 +13,6 @@ person("Joëlle", "Barido-Sottani", role = "aut")
 title = "MorphSim: Simulate Discrete Morphological Data along Phylogenetic Trees",
 year = "2025",
 version = "0.1.0",
-url = "[https://github.com/fossilsim/morphsim](https://github.com/fossilsim/morphsim)",
+url = "https://github.com/fossilsim/morphsim",
 note = "R package for simulating discrete morphological data. Licensed under Apache-2.0."
 )
