@@ -15,6 +15,13 @@
 #' @param fossil Fossil object used to simulate data
 #' @param transition_history The constant character transitions along the branches
 #'
+#' @return
+#' An object of class \code{"morpho"} containing the simulated morphological
+#' data and associated information. The object includes the simulated
+#' sequences, phylogenetic trees and branch rates used for the simulation,
+#' model parameters, root states, fossil information (if provided), and the
+#' character transition history.
+#'
 #' @export
 morpho <- function(sequences = NULL, trees = NULL, model = NULL,
                    transition_history = NULL, root.states = NULL,
@@ -88,3 +95,5 @@ as.morpho.default <- function(sequences, ...) {
 is.morpho <- function(sequences) {
   inherits(sequences, "morpho")
 }
+
+

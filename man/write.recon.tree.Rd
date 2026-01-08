@@ -11,11 +11,15 @@ write.recon.tree(data = NULL, file = NULL)
 
 \item{file}{File name}
 }
+\value{
+No return value, called for its side effect of writing data to a file.
+}
 \description{
 Write the reconstructed tree to Newick string
 }
 \examples{
-\dontrun{
-write.recon.tree(data = morpho_data, file = "reconstructed.tre")
-}
+data(morpho_data)
+tmp <- tempfile(fileext = ".tre")
+write.recon.tree(data = morpho_data, file = tmp)
+
 }

@@ -15,12 +15,16 @@ write.tsv(data, file, uncertainty = 0)
 The ages in the object are point estimates by default; setting `uncertainty`
 will create an age range of ± this value (in millions of years).}
 }
+\value{
+No return value, called for its side effect of writing data to a file.
+}
 \description{
 Writes the ages of the specimens in the true tree to a file. The tsv format used
 here is directly compatible with RevBayes
 }
 \examples{
-\dontrun{
-write.tsv(data = morpho_data, file = "ages.tsv")
-}
+data(morpho_data)
+tmp <- tempfile(fileext = ".tsv")
+write.tsv(data = morpho_data, file = tmp)
+
 }

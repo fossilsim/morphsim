@@ -9,10 +9,15 @@ morphsim_fossilsim(data = NULL)
 \arguments{
 \item{data}{Morpho object containing fossils}
 }
+\value{
+A character matrix mapping sampled ancestor labels between the naming
+conventions used by \code{Morphsim} and \code{Fossilsim}
+}
 \description{
-Match the sampled ancestor labels from Morphsim and Fossilsim
+Match the sampled ancestor labels from \code{Morphsim} and \code{Fossilsim}
 }
 \examples{
+data(morpho_data)
 morphsim_fossilsim <- function(data = morpho_data)
 
 }

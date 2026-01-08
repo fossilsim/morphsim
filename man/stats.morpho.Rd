@@ -22,14 +22,7 @@ Computes three key pieces of information for a morpho object:
 3. Summary information about the size and structure of the tree.
 }
 \examples{
-phy <- ape::rtree(10)
-morpho_data <- sim.morpho(tree = phy,
-                          k = c(2,3,4),
-                          trait.num = 20,
-                          ancestral = TRUE,
-                          partition = c(10,5,5),
-                          ACRV = "gamma",
-                          variable = TRUE,
-                          ACRV.ncats = 4)
+data(morpho_data)
 summary <- stats.morpho(data = morpho_data)
+
 }

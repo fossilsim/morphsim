@@ -11,21 +11,13 @@
 #' @param col A vector of colors that should be the same length or longer than the number of different character states (k). if not specified, the traits from 0 to 6 can be differentiated
 #' @param timetree  TRUE or FALSE Indicate whether you want to plot a time tree or not. default FALSE, uses distance tree if FALSE
 #'
+#' @return
+#' No return value, called for its side effect of producing a plot.
+#'
 #' @export
 #'
 #' @examples
-#' phy <- ape::rtree(10)
-#'
-#' # simulate characters along the branches of the tree
-#' morpho_data <- sim.morpho(tree = phy,
-#'                           k = c(2,3,4),
-#'                           trait.num = 20,
-#'                           ancestral = TRUE,
-#'                           partition = c(10,5,5),
-#'                           ACRV = "gamma",
-#'                           variable = TRUE,
-#'                           ACRV.ncats = 4 )
-#'
+#' data(morpho_data)
 #' # plot the character matrix
 #' plotMorphoGrid(data = morpho_data, seq = "tips", num.trait = "all")
 

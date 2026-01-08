@@ -24,25 +24,15 @@
 #'
 #' @import stats
 #' @import graphics
+#'
+#' @return
+#' No return value, called for its side effect of producing a plot.
+#'
 #' @export
 #'
 #' @examples
 #' # simulate a phylogenetic tree
-#' phy <- ape::rtree(10)
-#'
-#' # simulate characters along the branches of the tree
-#' morpho_data <- sim.morpho(
-#'   tree = phy,
-#'   k = c(2, 3, 4),
-#'   trait.num = 20,
-#'   ancestral = TRUE,
-#'   partition = c(10, 5, 5),
-#'   ACRV = "gamma",
-#'   variable = TRUE,
-#'   ACRV.ncats = 4,
-#'   define.Q = NULL
-#' )
-#'
+#' data(morpho_data)
 #' plot(morpho_data, trait = 4, timetree = FALSE, show.fossil = FALSE,
 #'      root.edge = FALSE, reconstructed = FALSE)
 #'

@@ -45,6 +45,13 @@ to simulate each trait}
 
 \item{fossil}{Fossil object used to simulate data}
 }
+\value{
+An object of class \code{"morpho"} containing the simulated morphological
+data and associated information. The object includes the simulated
+sequences, phylogenetic trees and branch rates used for the simulation,
+model parameters, root states, fossil information (if provided), and the
+character transition history.
+}
 \description{
 Create a morpho object.
 }

@@ -6,10 +6,14 @@
 #' @param data Morpho object
 #' @param file File name
 #'
+#' @return
+#' No return value, called for its side effect of writing data to a file.
+#'
 #' @examples
-#' \dontrun{
-#' write.recon.tree(data = morpho_data, file = "reconstructed.tre")
-#' }
+#' data(morpho_data)
+#' tmp <- tempfile(fileext = ".tre")
+#' write.recon.tree(data = morpho_data, file = tmp)
+#'
 #' @export
 #'
 write.recon.tree <- function (data = NULL, file = NULL) {
@@ -35,10 +39,15 @@ write.recon.tree <- function (data = NULL, file = NULL) {
 #'
 #' @param data Morpho object
 #' @param file File name
+#'
+#' @return
+#' No return value, called for its side effect of writing data to a file.
+#'
 #' @examples
-#' \dontrun{
-#' write.recon.matrix(data = morpho_data, file = "reconstructed.nex")
-#'}
+#' data(morpho_data)
+#' tmp <- tempfile(fileext = ".nex")
+#' write.recon.matrix(data = morpho_data, file = tmp)
+#'
 #' @export
 #'
 write.recon.matrix <- function (data, file = NULL) {
@@ -69,10 +78,14 @@ write.recon.matrix <- function (data, file = NULL) {
 #'  The ages in the object are point estimates by default; setting `uncertainty`
 #'  will create an age range of ± this value (in millions of years).
 #'
+#' @return
+#' No return value, called for its side effect of writing data to a file.
+#'
 #' @examples
-#' \dontrun{
-#' write.tsv(data = morpho_data, file = "ages.tsv")
-#'}
+#' data(morpho_data)
+#' tmp <- tempfile(fileext = ".tsv")
+#' write.tsv(data = morpho_data, file = tmp)
+#'
 #' @export
 write.tsv <- function (data, file, uncertainty = 0) {
 
@@ -113,10 +126,14 @@ write.tsv <- function (data, file, uncertainty = 0) {
 #' @param uncertainty Numeric. Adds uncertainty to fossil ages in the morpho object.
 #'  The ages in the object are point estimates by default; setting `uncertainty`
 #'  will create an age range of ± this value (in millions of years).
+#'
+#' @return
+#' No return value, called for its side effect of writing data to a file.
+#'
 #' @examples
-#' \dontrun{
-#' write.recon.tsv(data = morpho_data, file = "recon_ages.tsv")
-#' }
+#' data(morpho_data)
+#' tmp <- tempfile(fileext = ".tsv")
+#' write.recon.tsv(data = morpho_data, file = tmp)
 #'
 #' @export
 
@@ -176,10 +193,10 @@ write.recon.tsv <- function (data, file, uncertainty = 0){
 
   ## sampled ancestors
 
-  if (length(transformations[,"Morphosim"]) > 0){
+  if (length(transformations[,"Morphsim"]) > 0){
     for (i in 1:length(transformations[,1])){
 
-      parts <- as.numeric(strsplit(transformations[i, "Morphosim"], "_")[[1]])
+      parts <- as.numeric(strsplit(transformations[i, "Morphsim"], "_")[[1]])
       specimen_num <- parts[1]
       branch_num   <- parts[2]
 
@@ -203,9 +220,14 @@ write.recon.tsv <- function (data, file, uncertainty = 0){
 #' Match sampled ancestor labels
 #'
 #' @description
-#' Match the sampled ancestor labels from Morphsim and Fossilsim
+#' Match the sampled ancestor labels from \code{Morphsim} and \code{Fossilsim}
 #' @param data Morpho object containing fossils
+#' @return
+#' A character matrix mapping sampled ancestor labels between the naming
+#' conventions used by \code{Morphsim} and \code{Fossilsim}
+#'
 #' @examples
+#' data(morpho_data)
 #' morphsim_fossilsim <- function(data = morpho_data)
 #'
 morphsim_fossilsim <- function (data = NULL){

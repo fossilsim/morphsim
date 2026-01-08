@@ -11,11 +11,15 @@ write.recon.matrix(data, file = NULL)
 
 \item{file}{File name}
 }
+\value{
+No return value, called for its side effect of writing data to a file.
+}
 \description{
 Write the character matrix for the reconstructed tree to a nexus file
 }
 \examples{
-\dontrun{
-write.recon.matrix(data = morpho_data, file = "reconstructed.nex")
-}
+data(morpho_data)
+tmp <- tempfile(fileext = ".nex")
+write.recon.matrix(data = morpho_data, file = tmp)
+
 }
