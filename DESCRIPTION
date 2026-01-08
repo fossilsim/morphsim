@@ -7,7 +7,10 @@ Authors@R: c(person(given = "Laura", family = "Mulvey", role = c("aut", "cre", "
     person(given = "Alessio", family = "Capobianco",role=c("aut","cph")),
     person(given = "Rachel", family = "Warnock", role=c("aut","cph")),
     person(given =  "Joelle", family = "Barido-Sottani", role=c("aut","cph")))
-Description: Simulate morphological traits along phylogenetic trees. This package works with phylogenetic trees that have branch lengths representing either evolutionary distance or time. It also provides functions to visualize evolutionary processes along trees and within morphological matrices.
+Description: Tools to simulate morphological traits along phylogenetic
+trees with branch lengths representing evolutionary distance or time.
+Includes functions for visualizing evolutionary processes along trees
+and within morphological character matrices.
 License: GPL-3
 Encoding: UTF-8
 RoxygenNote: 7.3.3
