@@ -1,7 +1,7 @@
 Package: MorphSim
 Type: Package
 Title: Simulate Discrete Character Data along Phylogenetic Trees
-Version: 0.1.0
+Version: 0.2.0
 Authors@R: c(person(given = "Laura", family = "Mulvey", role = c("aut", "cre", "cph"), email = "lauramulvey479@gmail.com"),
     person(given = "Tim", family = "Brandler",role=c("aut","cph")),
     person(given = "Alessio", family = "Capobianco",role=c("aut","cph")),
@@ -15,7 +15,9 @@ License: GPL-3
 Encoding: UTF-8
 RoxygenNote: 7.3.3
 Imports: ape, FossilSim, stats, graphics, phangorn
-Suggests: TreeSim
+Suggests: TreeSim, testthat (>= 3.0.0)
+Config/testthat/edition: 3
 Depends: 
     R (>= 3.5)
 LazyData: true
+
