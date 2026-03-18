@@ -765,8 +765,13 @@ more missing data than living species.</p>
 <div id="summary-statistics" class="section level3">
 <h3>Summary statistics</h3>
 <p><code>stats.morpho</code> computes the consistency index, retention
-index, identifies convergent traits, and summarises the tree
-structure.</p>
+index, identifies convergent traits, and summarises the tree structure.
+The consistency index (CI; Kluge and Farris, 1969) measures the minimum
+number of character changes required on a tree relative to the observed
+number of changes, with values closer to 1 indicating less homoplasy.
+The retention index (RI; Farris, 1989) quantifies how well
+synapomorphies are retained on the tree, with higher values indicating
+stronger phylogenetic signal. Both metrics range from 0 to 1.</p>
 <div class="sourceCode" id="cb23"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" tabindex="-1"></a>stats <span class="ot">&lt;-</span> <span class="fu">stats.morpho</span>(fossil_data)</span>
 <span id="cb23-2"><a href="#cb23-2" tabindex="-1"></a>stats<span class="sc">$</span>Statistics</span>
 <span id="cb23-3"><a href="#cb23-3" tabindex="-1"></a><span class="co">#&gt;          CI        RI</span></span>
