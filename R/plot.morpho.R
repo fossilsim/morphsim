@@ -10,7 +10,7 @@
 #' @param show.fossil Plot the fossil along the tree. Default = FALSE.
 #' @param root.edge If TRUE plot the root edge. Default = FALSE.
 #' @param reconstructed Plot the reconstructed tree. Default = FALSE.
-#' @param convergent When convergent = TRUE, transition boxes are highlighted
+#' @param show.convergent When convergent = TRUE, transition boxes are highlighted
 #' for any state that arose independently more than once during the simulation.
 #' This includes transitions that were subsequently reversed on descendant
 #' branches
@@ -41,11 +41,11 @@
 #'      root.edge = FALSE, reconstructed = FALSE)
 #'
 plot.morpho <- function(x = NULL,
-                        trait = NULL,
-                        timetree = FALSE,
-                        show.fossil = FALSE,
-                        reconstructed = FALSE,
-                        convergent = FALSE,
+                        trait = 1,
+                        timetree = TRUE,
+                        show.fossil = TRUE,
+                        reconstructed = TRUE,
+                        show.convergent = TRUE,
                         root.edge = FALSE,
                         edge.width = 1,
                         label.offset = 0.01,
@@ -57,11 +57,27 @@ plot.morpho <- function(x = NULL,
                         col.timescale = "darkgrey",
                         ...) {
 
+
+
   if (is.null(x)) {
     stop("Error: 'x' cannot be NULL. Please provide a morpho object.")
   }
   if (!is.morpho(x) || is.null(x$trees)) {
     stop("Error: 'x' must be a morpho object containing a 'trees' element.")
+  }
+
+  # Fall back to simpler defaults if data not available
+  if (timetree && is.null(data$trees$TimeTree)) {
+    message("Note: no time tree available, using distance tree")
+    timetree <- FALSE
+  }
+  if (show.fossil && is.null(data$fossil)) {
+    message("Note: no fossil data available, fossils will not be shown")
+    show.fossil <- FALSE
+  }
+  if (reconstructed && is.null(data$fossil)) {
+    message("Note: no fossil data available, reconstructed tree will not be shown")
+    reconstructed <- FALSE
   }
 
   if (!is.null(trait) && (!is.numeric(trait) || length(trait) != 1)) {
@@ -141,7 +157,7 @@ plot.morpho <- function(x = NULL,
     # identify convergent transitions
     conv_states <- c()
     conv_root <- FALSE
-    if (convergent) {
+    if (show.convergent) {
       # count how many times each state arose from the transition history
       state_origins <- table(df$state)
       # root is also an origin of its state
@@ -155,7 +171,7 @@ plot.morpho <- function(x = NULL,
       conv_root <- root_st %in% conv_states
     }
 
-    root_border <- if (convergent && conv_root) "#4292C6" else "black"
+    root_border <- if (show.convergent && conv_root) "#4292C6" else "black"
 
 
     if (root.edge) {
@@ -194,7 +210,7 @@ plot.morpho <- function(x = NULL,
         }
         paint <- as.numeric(df$state[i]) + 1
 
-        border_col <- if (convergent && as.character(df$state[i]) %in% conv_states) "#4292C6" else "black"
+        border_col <- if (show.convergent && as.character(df$state[i]) %in% conv_states) "#4292C6" else "black"
 
         points(point_x, point_y, pch = 22, col = border_col, bg = col[paint], cex = box.cex)
         text(point_x, point_y, labels = as.numeric(df$state[i]), cex = box.cex / 4)

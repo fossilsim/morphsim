@@ -6,11 +6,11 @@
 \usage{
 \method{plot}{morpho}(
   x = NULL,
-  trait = NULL,
-  timetree = FALSE,
-  show.fossil = FALSE,
-  reconstructed = FALSE,
-  convergent = FALSE,
+  trait = 1,
+  timetree = TRUE,
+  show.fossil = TRUE,
+  reconstructed = TRUE,
+  show.convergent = TRUE,
   root.edge = FALSE,
   edge.width = 1,
   label.offset = 0.01,
@@ -34,7 +34,7 @@ tree or not. Default = FALSE (uses distance tree if FALSE).}
 
 \item{reconstructed}{Plot the reconstructed tree. Default = FALSE.}
 
-\item{convergent}{When convergent = TRUE, transition boxes are highlighted
+\item{show.convergent}{When convergent = TRUE, transition boxes are highlighted
 for any state that arose independently more than once during the simulation.
 This includes transitions that were subsequently reversed on descendant
 branches}

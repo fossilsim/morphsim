@@ -436,3 +436,69 @@ get.convergent <- function(data, trait = NULL) {
 
   return(summary)
 }
+
+
+#' Get Tranisition History
+#'
+#' @description
+#' Returns the full transition history for a given trait,
+#' including the root state.
+#'
+#' @param data A morpho object
+#' @param trait The trait number .
+#'
+#' @return A data frame with columns edge (branch number), state, and
+#' hmin (where along the branch the transition occurred)
+#'
+#' @export
+#' @examples
+#' phy <- ape::rtree(10)
+#' morpho_data <- sim.morpho(tree = phy, k = 2, trait.num = 20)
+#' get.transition(morpho_data, trait = 2)
+
+get.transitions <- function(data, trait) {
+  if (!is.morpho(data)) stop("Error: data must be a morpho object")
+  if (trait > length(data$transition_history)) {
+    stop(paste0("Error: trait ", trait, " is out of range. Object has ",
+                length(data$transition_history), " traits."))
+  }
+
+  root_row <- data.frame(edge = 0, state = as.numeric(data$root.states[trait]), hmin = 0)
+  tr <- data$transition_history[[trait]]
+
+  rbind(root_row, tr)
+}
+
+
+#' Get Specific Morphological Matrix
+#'
+#' @description
+#' Return data frame of morphological matrix
+#'
+#' @param data A morpho object
+#' @param seq The sequence data you want to extract
+#'
+#' @return A data frame with columns edge (branch number), state, and
+#' hmin (where along the branch the transition occurred)
+#'
+#' @export
+#' @examples
+#' phy <- ape::rtree(10)
+#' morpho_data <- sim.morpho(tree = phy, k = 2, trait.num = 20)
+#' get.matrix(morpho_data, tseq)
+
+get.matrix <- function(data, seq) {
+  if (!is.morpho(data)) stop("Error: data must be a morpho object")
+  if (!seq  %in% names(morpho_data$sequences)) {
+    stop(paste0(seq, " not found in morpho object"))
+  }
+
+  s <- t(as.data.frame(data$sequences[[seq]]))
+  return(s)
+
+}
+
+
+
+
+

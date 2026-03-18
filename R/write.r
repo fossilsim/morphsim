@@ -1,3 +1,57 @@
+#' Write morpho data to file
+#'
+#' @description
+#' Export components of a morpho object to file. Can write trees, character
+#' matrices, or fossil ages in various formats.
+#'
+#' @param data A morpho object
+#' @param file File name
+#' @param type type to write: "tree", "matrix", or "ages"
+#' @param reconstructed If TRUE, write the reconstructed version. Default FALSE.
+#' @param uncertainty Numeric. Age uncertainty for fossil ages. Default 0.
+#'
+#' @return No return value, called for its side effect of writing data to a file.
+#' @export
+#'
+#' @examples
+#' data(morpho_data)
+#' tmp <- tempfile(fileext = ".tre")
+#' write.morpho(morpho_data, file = tmp, type = "tree")
+#'
+write.morpho <- function(data, file, type = "tree",
+                         reconstructed = FALSE, uncertainty = 0) {
+
+  if (!is.morpho(data)) stop("Error: data must be a morpho object")
+  if (is.null(file)) stop("Error: No file name specified")
+
+  if (type == "tree") {
+    if (reconstructed) {
+      write.recon.tree(data, file)
+    } else {
+      ape::write.tree(data$trees$EvolTree, file)
+    }
+
+  } else if (type == "matrix") {
+    if (reconstructed) {
+      write.recon.matrix(data, file)
+    } else {
+      ape::write.nexus.data(data$sequences$tips, file, format = "standard")
+    }
+
+  } else if (type == "ages") {
+    if (reconstructed) {
+      write.recon.tsv(data, file, uncertainty)
+    } else {
+      write.tsv(data, file, uncertainty)
+    }
+
+  } else {
+    stop("Error: 'type' must be 'tree', 'matrix', or 'ages'")
+  }
+}
+
+
+
 #' Write reconstructed tree to file
 #'
 #' @description
