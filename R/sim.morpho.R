@@ -11,6 +11,7 @@
 #' @param k Number of trait states (integer \eqn{\geq} 2). Can be a vector if using partitions.
 #' @param trait.num The total number of traits to simulate (integer > 0).
 #' @param partition Vector specifying the number of traits per partition.
+#' @param root.state Define the root state at the start of the simulation.
 #' @param br.rates Clock rates per branch. Can be a single value (strict clock) or a vector of rates.
 #' @param ACRV Among character rate variation using either `gamma`, `lgn`,`user`, or `NULL`.
 #' When `gamma` specified, rates will be drawn from the discretized gamma distribution. Must define
@@ -105,6 +106,7 @@ sim.morpho <- function(tree = NULL,
                        trait.num,
                        partition = NULL,
                        br.rates = NULL,
+                       root.state = NULL,
                        ACRV = NULL,
                        alpha.gamma = 1,
                        ACRV.ncats = 4,
@@ -150,6 +152,12 @@ sim.morpho <- function(tree = NULL,
     stop("Error: `fossil` must be a FossilSim object.")
   }
 
+
+  if (!is.null(root.state) && root.state > min(k) -1){
+    stop("Root state specified not incluced in state matrix specified for simulation")
+  }
+
+
   ## if provided with time tree, need to transform branches in genetic distance
   if (is.null(tree) && !is.null(time.tree)) {
     tree <- time.tree
@@ -170,6 +178,7 @@ sim.morpho <- function(tree = NULL,
   } else {
     time.tree.order <- NULL
   }
+
 
   # counters and setup
   tr.num <- 1
@@ -223,7 +232,11 @@ sim.morpho <- function(tree = NULL,
 
     for (tr in 1:part.trait.num) {
       repeat {
+        if (is.null(root.state)){
         root.state <- sample(states, 1, replace = TRUE, prob = rep(1 / part_k, part_k))
+        } else {
+          root.state <- root.state
+        }
         state_at_nodes[as.character(root), tr.num] <- as.numeric(root.state)
 
         if (!is.null(ACRV)) {
