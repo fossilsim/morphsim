@@ -14,8 +14,11 @@
 #' @export
 #' @examples
 #' data(morpho_data)
+#'
 #' summary <- stats.morpho(data = morpho_data)
 #'
+#' @seealso \code{\link{get.convergent}} for detailed per-trait
+#' convergence information
 stats.morpho <- function(data){
 
   if (is.null(data) || !inherits(data, "morpho")) {
@@ -353,3 +356,83 @@ get.reconstructed <- function(data) {
   return(data)
 }
 
+
+#' Identify convergent traits
+#'
+#' @description
+#' Identifies convergent evolution in a morpho object. When called without a
+#' trait, returns a summary of which traits are convergent. When called with a
+#' specific trait, returns tip groupings by state and evolutionary origin.
+#'
+#' @param data A morpho object
+#' @param trait The trait number to examine. If \code{NULL} (default), returns a summary.
+#'
+#' @return A data frame. Without \code{trait}: trait index and number of convergent states.
+#'   With \code{trait}: state, origin, tips, and whether the state is convergent.
+#' @export
+#'
+#' @examples
+#' phy <- ape::rtree(10)
+#' morpho_data <- sim.morpho(tree = phy, k = 2, trait.num = 20)
+#' get.convergent(morpho_data)
+#' get.convergent(morpho_data, trait = 3)
+#'
+
+get.convergent <- function(data, trait = NULL) {
+  if (!is.morpho(data)) stop("Error: data must be a morpho object")
+
+  # Summary mode: return which traits are convergent
+  if (is.null(trait)) {
+    conv <- convergent_evol(data)
+    if (nrow(conv) == 0) return(data.frame(trait = integer(0),
+                                           num.convergent.states = integer(0)))
+    summary_df <- aggregate(state ~ trait, data = conv, FUN = length)
+    colnames(summary_df) <- c("trait", "num.convergent.states")
+    return(summary_df)
+  }
+
+  # Detail mode: group tips by state and origin for a specific trait
+  tree <- data$trees$EvolTree
+  tip_states <- sapply(data$sequences$tips, function(x) x[trait])
+  trans <- data$transition_history[[trait]]
+  root_state <- data$root.states[trait]
+
+  origin_labels <- character(length(tip_states))
+  names(origin_labels) <- names(tip_states)
+
+  for (tip in names(tip_states)) {
+    path <- find_path_to_tip(tree, tip)
+    origin <- "root"
+
+    for (l in seq(nrow(path), 1)) {
+      bran <- which(tree$edge[, 1] == path[l, "parent"] &
+                      tree$edge[, 2] == path[l, "child"])
+      if (nrow(trans) > 0 && bran %in% trans$edge) {
+        matches <- trans[trans$edge == bran, ]
+        last_change <- matches[which.max(matches$hmin), ]
+        origin <- paste0("edge_", last_change$edge, "_t_", round(last_change$hmin, 4))
+        break
+      }
+    }
+    origin_labels[tip] <- origin
+  }
+
+  result <- data.frame(
+    tip = names(tip_states),
+    state = tip_states,
+    origin = origin_labels,
+    row.names = NULL
+  )
+
+  summary <- aggregate(tip ~ state + origin, data = result,
+                       FUN = function(x) paste(x, collapse = ", "))
+
+  # flag convergent states
+  origins_per_state <- table(summary$state)
+  convergent_states <- names(origins_per_state[origins_per_state > 1])
+
+  summary$convergent <- summary$state %in% convergent_states
+  summary <- summary[order(summary$state, summary$origin), ]
+
+  return(summary)
+}

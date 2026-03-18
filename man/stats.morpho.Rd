@@ -23,6 +23,11 @@ Computes three key pieces of information for a morpho object:
 }
 \examples{
 data(morpho_data)
+
 summary <- stats.morpho(data = morpho_data)
 
+}
+\seealso{
+\code{\link{get.convergent}} for detailed per-trait
+convergence information
 }

@@ -10,6 +10,10 @@
 #' @param show.fossil Plot the fossil along the tree. Default = FALSE.
 #' @param root.edge If TRUE plot the root edge. Default = FALSE.
 #' @param reconstructed Plot the reconstructed tree. Default = FALSE.
+#' @param convergent When convergent = TRUE, transition boxes are highlighted
+#' for any state that arose independently more than once during the simulation.
+#' This includes transitions that were subsequently reversed on descendant
+#' branches
 #' @param edge.width Width of the branches.
 #' @param label.offset Distance of tip label to tree tips.
 #' @param f.cex Size of fossils.
@@ -41,9 +45,10 @@ plot.morpho <- function(x = NULL,
                         timetree = FALSE,
                         show.fossil = FALSE,
                         reconstructed = FALSE,
+                        convergent = FALSE,
                         root.edge = FALSE,
                         edge.width = 1,
-                        label.offset = 0.05,
+                        label.offset = 0.01,
                         e.cex = 0.5,
                         f.cex = 1,
                         box.cex = 4,
@@ -93,6 +98,8 @@ plot.morpho <- function(x = NULL,
 
   tree_to_plot <- if (timetree) data$trees$TimeTree else data$trees$EvolTree
 
+  label.offset = max(tree_to_plot$edge.length) * 0.02
+
   # Get branch colours (reconstructed vs. default)
 
   if (reconstructed) {
@@ -131,11 +138,30 @@ plot.morpho <- function(x = NULL,
   if (!is.null(trait)) {
     df <- data$transition_history[trait][[1]]
 
+    # identify convergent transitions
+    conv_states <- c()
+    conv_root <- FALSE
+    if (convergent) {
+      # count how many times each state arose from the transition history
+      state_origins <- table(df$state)
+      # root is also an origin of its state
+      root_st <- as.character(data$root.states[trait])
+      if (root_st %in% names(state_origins)) {
+        state_origins[root_st] <- state_origins[root_st] + 1
+      } else {
+        state_origins[root_st] <- 1
+      }
+      conv_states <- names(state_origins[state_origins > 1])
+      conv_root <- root_st %in% conv_states
+    }
+
+    root_border <- if (convergent && conv_root) "#4292C6" else "black"
+
 
     if (root.edge) {
       points(
         data$trees$TimeTree$root.edge, yy[root],
-        pch = 22, col = "black",
+        pch = 22, col = root_border,
         bg = col[as.numeric(data$root.states[trait]) + 1],
         cex = 4
       )
@@ -145,7 +171,7 @@ plot.morpho <- function(x = NULL,
       )
     } else {
       points(
-        0, yy[root], pch = 22, col = "black",
+        0, yy[root], pch = 22, col = root_border,
         bg = col[as.numeric(data$root.states[trait]) + 1],
         cex = box.cex
       )
@@ -167,7 +193,10 @@ plot.morpho <- function(x = NULL,
           point_y <- yy[data$trees$EvolTree[["edge"]][branch, 2]]
         }
         paint <- as.numeric(df$state[i]) + 1
-        points(point_x, point_y, pch = 22, col = "black", bg = col[paint], cex = box.cex)
+
+        border_col <- if (convergent && as.character(df$state[i]) %in% conv_states) "#4292C6" else "black"
+
+        points(point_x, point_y, pch = 22, col = border_col, bg = col[paint], cex = box.cex)
         text(point_x, point_y, labels = as.numeric(df$state[i]), cex = box.cex / 4)
       }
     }
