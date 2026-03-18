@@ -152,12 +152,12 @@ sim.missing.data <- function(data = NULL, seq = NULL, method = NULL, probability
   ## Method: Partition
   if(method == "partition"){
 
-    if (length(probability) != length(data$model)){
+    if (length(probability) != length(data$model$Specified)){
       stop("Vector of probabilities does not match the number of partitions")
     }
 
     start_col <- 1
-    for ( j in 1:length(data$model)){
+    for ( j in 1:length(data$model$Specified)){
       traits_per_partition <-  as.numeric(sub(".*Part:(\\d+).*", "\\1",
                                               data[["model"]][["Specified"]][j]))
       remove <- round((traits_per_partition* taxa.num)* probability[j], 0)

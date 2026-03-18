@@ -124,7 +124,7 @@ sim.morpho <- function(tree = NULL,
   if (any(k < 2)) stop("Error: Need to simulate at least 2 states")
   if (is.null(trait.num)) stop("Error: Specify the total number of traits to simulate")
 
-  if (ACRV == "user" && !is.null(define.ACRV.rates)) {
+  if (!is.null(ACRV) && ACRV == "user" && is.null(define.ACRV.rates)) {
     stop("Error: Need to provide a vector of rates if ACRV is set to 'user'")
   }
 

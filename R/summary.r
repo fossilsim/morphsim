@@ -489,7 +489,7 @@ get.transitions <- function(data, trait) {
 
 get.matrix <- function(data, seq) {
   if (!is.morpho(data)) stop("Error: data must be a morpho object")
-  if (!seq  %in% names(morpho_data$sequences)) {
+  if (!seq  %in% names(data$sequences)) {
     stop(paste0(seq, " not found in morpho object"))
   }
 

@@ -15,7 +15,8 @@ License: GPL-3
 Encoding: UTF-8
 RoxygenNote: 7.3.3
 Imports: ape, FossilSim, stats, graphics, phangorn
-Suggests: TreeSim, testthat (>= 3.0.0)
+Suggests: TreeSim, testthat (>= 3.0.0), knitr, rmarkdown
+VignetteBuilder: knitr
 Config/testthat/edition: 3
 Depends: 
     R (>= 3.5)
