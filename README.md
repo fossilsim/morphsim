@@ -2,14 +2,27 @@
 
 R package for simulating discrete character data along rooted phylogenies. Through integration with established R packages, MorphSim enables the simulation of biologically meaningful datasets across a variety of scenarios. 
 
-The latest version can be installed from github using `devtools` 
 
-``` r   
+### Installation
+
+MorphSim is available on CRAN:
+```r
+install.packages("MorphSim")
+```
+
+The development version can be installed from GitHub:
+```r
 library(devtools)
 devtools::install_github("https://github.com/fossilsim/morphsim")
-library(MorphSim)
 ```
-    
+
+### Dependencies
+
+MorphSim depends on R (≥ 3.5) and imports ape, FossilSim, and phangorn. TreeSim is suggested for tree simulation.
+
+### License
+
+GPL-3  
 
 
 ## Example 1: Simulating Data Along a Phylogenetic Tree - Basic set up
