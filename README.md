@@ -180,5 +180,3 @@ plot(x = morpho_data,
      reconstructed = T)
 ```
 
-## Licence 
-Apache 2.0 License
