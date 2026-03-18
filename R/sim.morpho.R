@@ -26,6 +26,7 @@
 #' @param sdlog standard deviation of the distribution on the log scale
 #' @param define.ACRV.rates Vector of gamma rate categories for the simulation.
 #' @param variable If `TRUE`, simulate only varying characters. Default is `FALSE`.
+#' @param strict If `TRUE`, ensure that at least one tip has the maximum character state, i.e., strictly keeping to the Q-matrix. Default is `FALSE`.
 #' @param ancestral If `TRUE`, return the states at all ancestral nodes. Default is `TRUE`.
 #' @param fossil Fossil object (from `FossilSim`) to simulate morphological characters.
 #' @param define.Q Q matrix for simulation. Must be a square matrix and rows must sum to zero.
@@ -114,6 +115,7 @@ sim.morpho <- function(tree = NULL,
                        sdlog = NULL,
                        define.ACRV.rates = NULL,
                        variable = FALSE,
+                       strict = FALSE,
                        ancestral = TRUE,
                        fossil = NULL,
                        define.Q = NULL) {
@@ -281,9 +283,11 @@ sim.morpho <- function(tree = NULL,
           if (to %in% nodes) state_at_nodes[as.character(to), tr.num] <- current_state
         }
 
-        if (!variable) break
-        if (length(unique(state_at_tips[, tr.num])) > 1 & length(unique(state_at_nodes[, tr.num])) > 1) break
-      }
+        if (!variable && !strict) break
+        vari <- !variable || (length(unique(state_at_tips[, tr.num])) > 1 & length(unique(state_at_nodes[, tr.num])) > 1)
+        has_max_state <- !strict || max(states) %in% state_at_tips[, tr.num]
+        if (vari && has_max_state) break
+          }
 
       if (!is.null(ACRV)) {
          ACRV_rate[tr.num] <- which(disc_rates == trait_rate)

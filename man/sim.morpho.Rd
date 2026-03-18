@@ -11,6 +11,7 @@ sim.morpho(
   trait.num,
   partition = NULL,
   br.rates = NULL,
+  root.state = NULL,
   ACRV = NULL,
   alpha.gamma = 1,
   ACRV.ncats = 4,
@@ -18,6 +19,7 @@ sim.morpho(
   sdlog = NULL,
   define.ACRV.rates = NULL,
   variable = FALSE,
+  strict = FALSE,
   ancestral = TRUE,
   fossil = NULL,
   define.Q = NULL
@@ -35,6 +37,8 @@ sim.morpho(
 \item{partition}{Vector specifying the number of traits per partition.}
 
 \item{br.rates}{Clock rates per branch. Can be a single value (strict clock) or a vector of rates.}
+
+\item{root.state}{Define the root state at the start of the simulation.}
 
 \item{ACRV}{Among character rate variation using either `gamma`, `lgn`,`user`, or `NULL`.
 When `gamma` specified, rates will be drawn from the discretized gamma distribution. Must define
@@ -55,6 +59,8 @@ When `NULL` specified all traits are simulated under the same rate. Default is `
 \item{define.ACRV.rates}{Vector of gamma rate categories for the simulation.}
 
 \item{variable}{If `TRUE`, simulate only varying characters. Default is `FALSE`.}
+
+\item{strict}{If `TRUE`, ensure that at least one tip has the maximum character state, i.e., strictly keeping to the Q-matrix. Default is `FALSE`.}
 
 \item{ancestral}{If `TRUE`, return the states at all ancestral nodes. Default is `TRUE`.}
 
