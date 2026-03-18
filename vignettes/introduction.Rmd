@@ -224,7 +224,7 @@ ordered_data <- sim.morpho(
 
 Note that when using a custom Q matrix, all traits in that simulation share
 the same matrix. If you want to simulate different partitions under different
-Q matrices — for example, some ordered and some unordered characters — you
+Q matrices, for example, some ordered and some unordered characters, you
 can simulate them separately and combine the results. See the section on
 combining morpho objects below.
 
@@ -319,7 +319,7 @@ histories, root states, and model information from both inputs.
 ## FossilSim integration
 
 MorphSim integrates with FossilSim to simulate character data for sampled
-ancestors — fossils that represent direct ancestors of other lineages.
+ancestors, fossils that represent direct ancestors of other lineages.
 Because MorphSim tracks where transitions occur along branches, it generates
 trait values appropriate to the time and lineage at which each fossil was
 sampled.
@@ -362,7 +362,7 @@ missing_random <- sim.missing.data(
 
 Different partitions can have different probabilities of missing data. This
 reflects how different anatomical regions may have different preservation
-potential — for example, robust skeletal elements are more likely to be
+potential, for example, robust skeletal elements are more likely to be
 preserved than soft tissue features. The probability vector must match the
 number of partitions.
 
@@ -445,7 +445,7 @@ missing_extinct <- sim.missing.data(
 ### Summary statistics
 
 `stats.morpho` computes the consistency index, retention index, identifies
-convergent traits, and summarises the tree structure.
+convergent traits, and summarises the tree structure. The consistency index (CI; Kluge and Farris, 1969) measures the minimum number of character changes required on a tree relative to the observed number of changes, with values closer to 1 indicating less homoplasy. The retention index (RI; Farris, 1989) quantifies how well synapomorphies are retained on the tree, with higher values indicating stronger phylogenetic signal. Both metrics range from 0 to 1.
 
 ```{r stats}
 stats <- stats.morpho(fossil_data)
@@ -485,7 +485,7 @@ get.transitions(fossil_data, trait = 1)
 
 `plot.morpho` displays the evolutionary history of a trait along the tree.
 Transition boxes show where state changes occurred along each branch. We
-start with the simplest version — just the trait history on the distance
+start with the simplest version, just the trait history on the distance
 tree, with all additional features turned off.
 
 ```{r plot_basic, fig.height = 6}
@@ -510,7 +510,7 @@ plot(fossil_data, trait = 6, timetree = TRUE,
 ### Showing the reconstructed tree
 
 When `reconstructed = TRUE`, the plot distinguishes between the full
-(true) tree and the reconstructed tree — the tree containing only the
+(true) tree and the reconstructed tree, the tree containing only the
 sampled lineages. Branches that are part of the reconstructed tree are
 drawn in black, while unsampled lineages are shown in grey. This helps
 visualise how much of the true evolutionary history is captured by the
@@ -535,7 +535,7 @@ plot(fossil_data, trait = 6, timetree = TRUE,
      show.convergent = TRUE)
 ```
 
-By default, `plot.morpho` shows all available features — the time tree,
+By default, `plot.morpho` shows all available features, the time tree,
 fossils, reconstructed tree, and convergence highlighting. If any of these
 are not available in the morpho object (e.g., no fossil data was provided),
 the plot falls back gracefully and informs the user. So the plot above is
