@@ -67,15 +67,15 @@ plot.morpho <- function(x = NULL,
   }
 
   # Fall back to simpler defaults if data not available
-  if (timetree && is.null(data$trees$TimeTree)) {
+  if (timetree && is.null(x$trees$TimeTree)) {
     message("Note: no time tree available, using distance tree")
     timetree <- FALSE
   }
-  if (show.fossil && is.null(data$fossil)) {
+  if (show.fossil && is.null(x$fossil)) {
     message("Note: no fossil data available, fossils will not be shown")
     show.fossil <- FALSE
   }
-  if (reconstructed && is.null(data$fossil)) {
+  if (reconstructed && is.null(x$fossil)) {
     message("Note: no fossil data available, reconstructed tree will not be shown")
     reconstructed <- FALSE
   }
