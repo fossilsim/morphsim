@@ -12,14 +12,15 @@ sim.morpho(
   partition = NULL,
   br.rates = NULL,
   root.state = NULL,
+  variable = FALSE,
+  strict = FALSE,
+  parsimony = NULL,
   ACRV = NULL,
   alpha.gamma = 1,
   ACRV.ncats = 4,
   meanlog = NULL,
   sdlog = NULL,
   define.ACRV.rates = NULL,
-  variable = FALSE,
-  strict = FALSE,
   ancestral = TRUE,
   fossil = NULL,
   define.Q = NULL
@@ -40,6 +41,17 @@ sim.morpho(
 
 \item{root.state}{Define the root state at the start of the simulation.}
 
+\item{variable}{If `TRUE`, simulate only varying characters. Default is `FALSE`.}
+
+\item{strict}{If `TRUE`, ensure that at least one tip has the maximum character
+state, i.e., strictly keeping to the Q-matrix. Default is `FALSE`.}
+
+\item{parsimony}{If `"standard"`, retain only characters where at least two states
+each occur in two or more taxa; autapomorphic states are tolerated.
+If `"strict"`, every observed state must occur in two or more taxa, excluding
+characters with any autapomorphic states entirely. If `NULL`, no parsimony filter
+is applied. Default is `NULL`..}
+
 \item{ACRV}{Among character rate variation using either `gamma`, `lgn`,`user`, or `NULL`.
 When `gamma` specified, rates will be drawn from the discretized gamma distribution. Must define
 number of categories (ACRV.ncats) and the shape of the distribution (alpha.gamma).
@@ -57,10 +69,6 @@ When `NULL` specified all traits are simulated under the same rate. Default is `
 \item{sdlog}{standard deviation of the distribution on the log scale}
 
 \item{define.ACRV.rates}{Vector of gamma rate categories for the simulation.}
-
-\item{variable}{If `TRUE`, simulate only varying characters. Default is `FALSE`.}
-
-\item{strict}{If `TRUE`, ensure that at least one tip has the maximum character state, i.e., strictly keeping to the Q-matrix. Default is `FALSE`.}
 
 \item{ancestral}{If `TRUE`, return the states at all ancestral nodes. Default is `TRUE`.}
 

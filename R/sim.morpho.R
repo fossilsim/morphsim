@@ -11,8 +11,16 @@
 #' @param k Number of trait states (integer \eqn{\geq} 2). Can be a vector if using partitions.
 #' @param trait.num The total number of traits to simulate (integer > 0).
 #' @param partition Vector specifying the number of traits per partition.
-#' @param root.state Define the root state at the start of the simulation.
 #' @param br.rates Clock rates per branch. Can be a single value (strict clock) or a vector of rates.
+#' @param root.state Define the root state at the start of the simulation.
+#' @param variable If `TRUE`, simulate only varying characters. Default is `FALSE`.
+#' @param strict If `TRUE`, ensure that at least one tip has the maximum character
+#' state, i.e., strictly keeping to the Q-matrix. Default is `FALSE`.
+#' @param parsimony If `"standard"`, retain only characters where at least two states
+#' each occur in two or more taxa; autapomorphic states are tolerated.
+#' If `"strict"`, every observed state must occur in two or more taxa, excluding
+#' characters with any autapomorphic states entirely. If `NULL`, no parsimony filter
+#' is applied. Default is `NULL`..
 #' @param ACRV Among character rate variation using either `gamma`, `lgn`,`user`, or `NULL`.
 #' When `gamma` specified, rates will be drawn from the discretized gamma distribution. Must define
 #' number of categories (ACRV.ncats) and the shape of the distribution (alpha.gamma).
@@ -25,8 +33,6 @@
 #' @param meanlog mean of the distribution on the log scale.
 #' @param sdlog standard deviation of the distribution on the log scale
 #' @param define.ACRV.rates Vector of gamma rate categories for the simulation.
-#' @param variable If `TRUE`, simulate only varying characters. Default is `FALSE`.
-#' @param strict If `TRUE`, ensure that at least one tip has the maximum character state, i.e., strictly keeping to the Q-matrix. Default is `FALSE`.
 #' @param ancestral If `TRUE`, return the states at all ancestral nodes. Default is `TRUE`.
 #' @param fossil Fossil object (from `FossilSim`) to simulate morphological characters.
 #' @param define.Q Q matrix for simulation. Must be a square matrix and rows must sum to zero.
@@ -108,14 +114,15 @@ sim.morpho <- function(tree = NULL,
                        partition = NULL,
                        br.rates = NULL,
                        root.state = NULL,
+                       variable = FALSE,
+                       strict = FALSE,
+                       parsimony = NULL,
                        ACRV = NULL,
                        alpha.gamma = 1,
                        ACRV.ncats = 4,
                        meanlog = NULL,
                        sdlog = NULL,
                        define.ACRV.rates = NULL,
-                       variable = FALSE,
-                       strict = FALSE,
                        ancestral = TRUE,
                        fossil = NULL,
                        define.Q = NULL) {
@@ -232,6 +239,7 @@ sim.morpho <- function(tree = NULL,
     states <- as.character(c(0:(part_k - 1)))
     bl <- tree.ordered$edge.length
 
+    # start of simulation loop
     for (tr in 1:part.trait.num) {
       repeat {
         if (is.null(root.state)){
@@ -283,11 +291,23 @@ sim.morpho <- function(tree = NULL,
           if (to %in% nodes) state_at_nodes[as.character(to), tr.num] <- current_state
         }
 
-        if (!variable && !strict) break
+        # filtering conditions
+        if (!variable && !strict && is.null(parsimony)) break
         vari <- !variable || (length(unique(state_at_tips[, tr.num])) > 1 & length(unique(state_at_nodes[, tr.num])) > 1)
         has_max_state <- !strict || max(states) %in% state_at_tips[, tr.num]
-        if (vari && has_max_state) break
-          }
+        pars <- if (is.null(parsimony)) {
+          TRUE
+        } else if (parsimony == "standard") {
+          # Literal parsimony informative from paup, TNT
+          # At least two states each appear in >= 2 taxa (allows autapomorphies)
+          sum(table(state_at_tips[, tr.num]) >= 2) >= 2
+        } else if (parsimony == "strict") {
+          # Strictly parsimony-informative: no autapomorphies permitted.
+          # Every observed state must occur in >= 2 taxa.
+          all(table(state_at_tips[, tr.num]) >= 2)
+        }
+        if (vari && has_max_state && pars) break
+          } # end of simulation loop
 
       if (!is.null(ACRV)) {
          ACRV_rate[tr.num] <- which(disc_rates == trait_rate)
