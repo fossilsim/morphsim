@@ -166,6 +166,10 @@ sim.morpho <- function(tree = NULL,
     stop("Root state specified not incluced in state matrix specified for simulation")
   }
 
+  if (!is.null(parsimony) && !parsimony %in% c("standard", "strict")) {
+    stop("Error: `parsimony` must be NULL, 'standard', or 'strict'")
+  }
+
 
   ## if provided with time tree, need to transform branches in genetic distance
   if (is.null(tree) && !is.null(time.tree)) {
