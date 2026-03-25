@@ -13,7 +13,7 @@ sim.morpho(
   br.rates = NULL,
   root.state = NULL,
   variable = FALSE,
-  strict = FALSE,
+  full.states = FALSE,
   parsimony = NULL,
   ACRV = NULL,
   alpha.gamma = 1,
@@ -43,8 +43,8 @@ sim.morpho(
 
 \item{variable}{If `TRUE`, simulate only varying characters. Default is `FALSE`.}
 
-\item{strict}{If `TRUE`, ensure that at least one tip has the maximum character
-state, i.e., strictly keeping to the Q-matrix. Default is `FALSE`.}
+\item{full.states}{If `TRUE`, ensures that all character states specified by \code{k}
+are present in at least one tip for each trait. Default is `FALSE`.}
 
 \item{parsimony}{If `"standard"`, retain only characters where at least two states
 each occur in two or more taxa; autapomorphic states are tolerated.

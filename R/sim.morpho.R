@@ -14,8 +14,8 @@
 #' @param br.rates Clock rates per branch. Can be a single value (strict clock) or a vector of rates.
 #' @param root.state Define the root state at the start of the simulation.
 #' @param variable If `TRUE`, simulate only varying characters. Default is `FALSE`.
-#' @param strict If `TRUE`, ensure that at least one tip has the maximum character
-#' state, i.e., strictly keeping to the Q-matrix. Default is `FALSE`.
+#' @param full.states If `TRUE`, ensures that all character states specified by \code{k}
+#' are present in at least one tip for each trait. Default is `FALSE`.
 #' @param parsimony If `"standard"`, retain only characters where at least two states
 #' each occur in two or more taxa; autapomorphic states are tolerated.
 #' If `"strict"`, every observed state must occur in two or more taxa, excluding
@@ -115,7 +115,7 @@ sim.morpho <- function(tree = NULL,
                        br.rates = NULL,
                        root.state = NULL,
                        variable = FALSE,
-                       strict = FALSE,
+                       full.states = FALSE,
                        parsimony = NULL,
                        ACRV = NULL,
                        alpha.gamma = 1,
@@ -245,7 +245,14 @@ sim.morpho <- function(tree = NULL,
 
     # start of simulation loop
     for (tr in 1:part.trait.num) {
+      iter <- 0
       repeat {
+        iter <- iter + 1
+        if (iter > 1e6) {
+          stop("sim.morpho: character ", tr, " has not converged after 1e6 iterations. ",
+                  "Consider reducing k, increasing branch the rates, or relaxing the full.states or parsimony conditions.")
+          }
+
         if (is.null(root.state)){
         root.state <- sample(states, 1, replace = TRUE, prob = rep(1 / part_k, part_k))
         } else {
@@ -296,9 +303,9 @@ sim.morpho <- function(tree = NULL,
         }
 
         # filtering conditions
-        if (!variable && !strict && is.null(parsimony)) break
+        if (!variable && !full.states && is.null(parsimony)) break
         vari <- !variable || (length(unique(state_at_tips[, tr.num])) > 1 & length(unique(state_at_nodes[, tr.num])) > 1)
-        has_max_state <- !strict || max(states) %in% state_at_tips[, tr.num]
+        has_max_state <- !full.states || all(states %in% state_at_tips[, tr.num])
         pars <- if (is.null(parsimony)) {
           TRUE
         } else if (parsimony == "standard") {
