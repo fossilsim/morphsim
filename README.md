@@ -102,7 +102,7 @@ For the character data we can relax the assumptions of the Mk model in a number 
 
 - **alpha.gamma**: the shape of the alpha distribution
 
--**variable**: When set to true this will only return traits which vary across taxa, i.e., the MkV model
+- **variable**: When set to true this will only return traits which vary across taxa, i.e., the MkV model
 
 ```r
 morpho_data <-  sim.morpho(k = c(2,3), 
@@ -178,7 +178,7 @@ morpho_data <-  sim.morpho(k = c(2,3),
                            br.rates = reltt$edge.length,
                            ACRV = "gamma",
                            alpha.gamma = 1,
-                           ACRV.ncats = 4
+                           ACRV.ncats = 4,
                            variable = TRUE,
                            fossil = f2)
 ```
@@ -193,3 +193,23 @@ plot(x = morpho_data,
      reconstructed = T)
 ```
 
+## Example 4: Simulating Parsimony Informative characters
+MorphSim allows you to filter simulated characters based on their parsimony informativeness. By changing the default `parsimony = NULL` to either `"standard"` or `"strict"`, you can control which traits are simulated in your dataset.
+
+- **standard**: Retains characters with at least two effective states, including autapomorphies (traits unique to a single taxon)
+
+- **strict**: Only retains parsimony-informative characters (traits shared by at least two taxa)
+
+```r
+morpho_data <-  sim.morpho(k = c(2,3), 
+                           time.tree = tree,
+                           tree = NULL,
+                           partition = c(10,10),
+                           trait.num = 20,
+                           br.rates = 0.1,
+                           parsimony = "standard",   # alternatively use "strict" to exclude autapomorphies
+                           ancestral = TRUE,
+                           fossil = f2)
+``` 
+
+> Note: Simulating data using filters (e.g., only retaining parsimony-informative characters) introduces **ascertainment bias** and should therefore be considered with care.                       
