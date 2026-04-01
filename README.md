@@ -212,4 +212,3 @@ morpho_data <-  sim.morpho(k = c(2,3),
                            fossil = f2)
 ``` 
 
-> Note: Simulating data using filters (e.g., only retaining parsimony-informative characters) introduces **ascertainment bias** and should therefore be considered with care.                       
