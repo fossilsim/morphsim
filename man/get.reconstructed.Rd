@@ -13,8 +13,11 @@ get.reconstructed(data)
 a `morpho object`
 }
 \description{
-Function to add the reconstructed tree and corresponding reconstructed
-matrix to an existing morpho object
+This function should be called if you want to access the
+reconstructed tree and character matrix directly from the morpho object.
+It adds the reconstructed tree in Newick format ($trees$Recon), containing
+only the sampled lineages, and a character matrix ($sequences$recon)
+containing only the taxa present in that reconstructed tree.
 }
 \examples{
 # simulate tree

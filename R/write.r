@@ -11,6 +11,9 @@
 #' @param uncertainty Numeric. Age uncertainty for fossil ages. Default 0.
 #'
 #' @return No return value, called for its side effect of writing data to a file.
+#'
+#' @importFrom ape write.tree write.nexus.data
+#'
 #' @export
 #'
 #' @examples

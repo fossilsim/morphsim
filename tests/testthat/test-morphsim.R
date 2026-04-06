@@ -88,6 +88,21 @@ test_that("sim.morpho generates data for tips and sampled ancestors", {
   }
 })
 
+
+test_that("get.reconstructed adds recon tree and matrix to morpho object", {
+  set.seed(42)
+  f <- FossilSim::sim.fossils.poisson(rate = 0.5, tree = time.tree, root.edge = FALSE)
+  f2 <- FossilSim::sim.extant.samples(fossils = f, tree = time.tree, rho = 1)
+  data <- sim.morpho(time.tree = time.tree, k = 2, trait.num = 5,
+                     br.rates = 0.1, fossil = f2)
+  recon <- get.reconstructed(data)
+  expect_true(is.morpho(recon))
+  expect_false(is.null(recon$sequences$recon))
+  expect_false(is.null(recon$trees$Recon))
+  expect_s3_class(recon$trees$Recon$tree, "phylo")
+  expect_true(all(names(recon$sequences$recon) %in% recon$trees$Recon$tree$tip.label))
+})
+
 # ============================================================
 # sim.missing.data
 # ============================================================
@@ -119,6 +134,36 @@ test_that("sim.missing.data works with structured methods", {
   expect_true(all(tip_matrix[, 2] == "?"))
 })
 
+test_that("sim.missing.data works with trait_taxa method", {
+  data <- sim.morpho(tree = tree, k = 2, trait.num = 10)
+  taxa_to_remove <- names(data$sequences$tips)[1:2]
+  missing <- sim.missing.data(data = data, method = "trait_taxa",
+                              seq = "tips", probability = 1,
+                              traits = c(1, 2), taxa = taxa_to_remove)
+  tip_matrix <- t(as.data.frame(missing$sequences$tips))
+  # only the specified taxa and traits should be missing
+  expect_true(all(tip_matrix[taxa_to_remove, 1:2] == "?"))
+  # other taxa should be unaffected
+  other_taxa <- setdiff(rownames(tip_matrix), taxa_to_remove)
+  expect_false(any(tip_matrix[other_taxa, 1:2] == "?"))
+})
+
+
+test_that("sim.missing.data rate method removes data in correct order", {
+  data <- sim.morpho(tree = tree, k = 2, trait.num = 20,
+                     ACRV = "gamma", alpha.gamma = 1, ACRV.ncats = 4)
+  # probability 0 for slowest category, 1 for fastest
+  missing <- sim.missing.data(data = data, method = "rate",
+                              seq = "tips", probability = c(0, 0, 0, 1))
+  tip_matrix <- t(as.data.frame(missing$sequences$tips))
+  sorted_cats <- sort(unique(data$model$RateVarTrait[1, ]))
+  fastest_traits <- which(data$model$RateVarTrait[1, ] == sorted_cats[4])
+  slowest_traits <- which(data$model$RateVarTrait[1, ] == sorted_cats[1])
+  # fastest traits should all be missing
+  expect_true(all(tip_matrix[, fastest_traits] == "?"))
+  # slowest traits should not be missing
+  expect_false(any(tip_matrix[, slowest_traits] == "?"))
+})
 # ============================================================
 # stats.morpho
 # ============================================================
@@ -158,23 +203,33 @@ test_that("export functions write valid files", {
   data <- sim.morpho(time.tree = time.tree, k = 2, trait.num = 5,
                      br.rates = 0.1, fossil = f2)
 
-  # reconstructed tree
+  # full tree
   tmp_tree <- tempfile(fileext = ".nwk")
-  write.recon.tree(data, file = tmp_tree)
+  write.morpho(data, file = tmp_tree, type = "tree")
   expect_s3_class(ape::read.tree(tmp_tree), "phylo")
 
-  # reconstructed matrix
+  # reconstructed tree
+  tmp_recon_tree <- tempfile(fileext = ".nwk")
+  write.morpho(data, file = tmp_recon_tree, type = "tree", reconstructed = TRUE)
+  expect_s3_class(ape::read.tree(tmp_recon_tree), "phylo")
+
+  # character matrix
   tmp_nex <- tempfile(fileext = ".nex")
-  write.recon.matrix(data, file = tmp_nex)
+  write.morpho(data, file = tmp_nex, type = "matrix")
   expect_gt(file.info(tmp_nex)$size, 0)
+
+  # reconstructed matrix
+  tmp_recon_nex <- tempfile(fileext = ".nex")
+  write.morpho(data, file = tmp_recon_nex, type = "matrix", reconstructed = TRUE)
+  expect_gt(file.info(tmp_recon_nex)$size, 0)
 
   # age file
   tmp_tsv <- tempfile(fileext = ".tsv")
-  write.tsv(data, file = tmp_tsv)
+  write.morpho(data, file = tmp_tsv, type = "ages")
   ages <- read.delim(tmp_tsv, sep = "\t")
   expect_true(all(c("taxon", "min_age", "max_age") %in% names(ages)))
 
-  unlink(c(tmp_tree, tmp_nex, tmp_tsv))
+  unlink(c(tmp_tree, tmp_recon_tree, tmp_nex, tmp_recon_nex, tmp_tsv))
 })
 
 # ============================================================

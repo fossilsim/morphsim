@@ -24,6 +24,8 @@ MorphSim depends on R (≥ 3.5) and imports ape, FossilSim, and phangorn. TreeSi
 
 GPL-3  
 
+## Quick Start Tutorials 
+For a more in-depth explanation of the functionality of MorphSim see the introductory vignette.
 
 ## Example 1: Simulating Data Along a Phylogenetic Tree - Basic set up
 To simulate morphological data you will first need a phylogenetic tree. MorphSim can take either, a time tree or a tree with branch lengths in genetic distance as input. In this example we will use a time tree. You can simulate a tree using the existing R package `TreeSim`
@@ -94,7 +96,7 @@ reltt <- simclock::relaxed.tree(tree,
                                 r=.04e-1,     # mean mutation rate
                                 s2=.26e-2)   # diffusion rate
 ```
-For the character data we can relax the assumptions of the Mk model in a number of ways as described below
+For the character data we can relax the assumptions of the Mk model in a number of ways as described below. The br.rates argument accepts any numeric vector of rates, one per branch, in the same order as tree$edge. Here we pass reltt$edge.length from simclock, but any custom vector of branch rates can be used directly, for example, br.rates = rep(0.1, nrow(tree$edge)) for a strict clock, or a user-defined vector reflecting prior knowledge about lineage-specific rates.
 
 - **ACRV**: Here you can specify if you would like to model among character rate variation. This is commonly used for morphological data sets as traits may evolve at different rates. There are three input options here, `gamma`, `lgn`, and `user`. Gamma uses a discrete gamma distribution, lgn will use a discrete lognormal, and user allows the user to specify rates.
 
@@ -121,7 +123,7 @@ morpho_data <-  sim.morpho(k = c(2,3),
 > Note: If you choose to simulate data under an ACRV using a lognormal distribution, you will need to provide values for the `meanlog` and the `sdlog`. Similarly for the user option the rates should be passed through `define.ACRV.rates`
 
 ### Ordered characters
-In morphological datasets, transitions between character states are often restricted, meaning that a change can only occur between specific states. For example, a character might be able to transition from 0 → 1, but not directly from 1 → 2; the species must pass through the intermediate state. These are known as correlated characters. In MorphSim, we can simulate such characters by defining a Q matrix that enforces these allowed transitions.
+In morphological datasets, transitions between character states are often restricted, meaning that a change can only occur between specific states. For example, a character might be able to transition from 0 → 1, but not directly from 0 → 2; the species must pass through the intermediate state. These are known as correlated characters. In MorphSim, we can simulate such characters by defining a Q matrix that enforces these allowed transitions.
 
 Define a Q matrix the allows 0 &harr; 1 &harr; 2
 

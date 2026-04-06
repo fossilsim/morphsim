@@ -13,5 +13,12 @@ convergent_evol(data = NULL)
 A data.frame listing convergent traits, their state, and number of transitions
 }
 \description{
-Identifies which traits have evolved independently multiple times (convergent evolution) in a morpho object.
+Identifies which traits have evolved independently multiple times
+(convergent evolution) in a morpho object.
+}
+\examples{
+phy <- ape::rtree(10)
+morpho_data <- sim.morpho(tree = phy, k = 2, trait.num = 20)
+convergent_evol(morpho_data)
+
 }

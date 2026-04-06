@@ -11,6 +11,8 @@
 #'   \item{b.colours}{Vector of branch colors for plotting.}
 #'   \item{rem}{Indices of branches with fossils.}
 #'
+#' @importFrom ape nodepath
+#'
 reconstruct.tree <- function(data) {
 
   # Reconstruct the tree and extract tips

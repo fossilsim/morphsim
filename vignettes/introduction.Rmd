@@ -240,10 +240,10 @@ fixed_root <- sim.morpho(
 )
 ```
 
-### Strict coding
+### Ensure full state space
 
-Setting `strict = TRUE` ensures that at least one tip has the maximum
-character state defined by `k`. This is useful when you want to guarantee
+Setting `full.states = TRUE` ensures that all character states specified by `k`
+are present in at least one tip for each trait. This is useful when you want to guarantee
 that the full range of states specified in the Q matrix is observed at the
 tips. Without this, it is possible for a character with `k = 3` to only
 show states 0 and 1 at the tips if state 2 was never reached or was lost
@@ -251,7 +251,7 @@ before the present.
 ```{r strict}
 strict_data <- sim.morpho(
   time.tree = tree, k = 3, trait.num = 10,
-  br.rates = 0.1, strict = TRUE
+  br.rates = 0.1, full.states = TRUE
 )
 ```
 
@@ -273,6 +273,8 @@ part_data <- sim.morpho(
 # Model specification per partition
 part_data$model$Specified
 ```
+
+The total number of traits defined by trait.num and partition must match or the function will return an error.
 
 ### Combining morpho objects
 
@@ -439,6 +441,19 @@ missing_extinct <- sim.missing.data(
 )
 ```
 
+### Missing data for specific traits and taxa
+
+Remove characters from specific traits and specific taxa.
+This reflects scenarios where certain anatomical regions are less likely to
+be preserved in particular lineages.
+```{r missing_trait_taxa}
+missing_trait_taxa <- sim.missing.data(
+  data = fossil_data, method = "trait_taxa",
+  seq = "tips", probability = 0.8,
+  traits = c(1, 2, 3),
+  taxa = taxa_to_remove
+)
+```
 
 ## Exploring simulated data
 

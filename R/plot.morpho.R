@@ -28,6 +28,7 @@
 #'
 #' @import stats
 #' @import graphics
+#' @importFrom ape node.depth.edgelength Ntip
 #'
 #' @return
 #' No return value, called for its side effect of producing a plot.

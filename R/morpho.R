@@ -22,6 +22,11 @@
 #' model parameters, root states, fossil information (if provided), and the
 #' character transition history.
 #'
+#' @examples
+#' phy <- ape::rtree(10)
+#' morpho_data <- sim.morpho(tree = phy, k = 2, trait.num = 5)
+#' is.morpho(morpho_data) # TRUE
+#'
 #' @export
 morpho <- function(sequences = NULL, trees = NULL, model = NULL,
                    transition_history = NULL, root.states = NULL,

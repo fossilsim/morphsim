@@ -55,3 +55,9 @@ character transition history.
 \description{
 Create a morpho object.
 }
+\examples{
+phy <- ape::rtree(10)
+morpho_data <- sim.morpho(tree = phy, k = 2, trait.num = 5)
+is.morpho(morpho_data) # TRUE
+
+}

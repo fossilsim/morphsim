@@ -27,54 +27,76 @@ sim.morpho(
 )
 }
 \arguments{
-\item{tree}{A phylogenetic tree (class "phylo") with branches representing genetic distance.}
+\item{tree}{A phylogenetic tree (class \code{"phylo"}) with branches
+representing genetic distance.}
 
-\item{time.tree}{A phylogenetic tree (class "phylo") with branches representing time.}
+\item{time.tree}{A phylogenetic tree (class \code{"phylo"}) with branches
+representing time.}
 
-\item{k}{Number of trait states (integer \eqn{\geq} 2). Can be a vector if using partitions.}
+\item{k}{Integer (>= 2). Number of trait states. Can be a vector if using
+partitions.}
 
-\item{trait.num}{The total number of traits to simulate (integer > 0).}
+\item{trait.num}{Integer (> 0). The total number of traits to simulate.}
 
-\item{partition}{Vector specifying the number of traits per partition.}
+\item{partition}{Integer vector. Specifies the number of traits per
+partition. Must sum to \code{trait.num}.}
 
-\item{br.rates}{Clock rates per branch. Can be a single value (strict clock) or a vector of rates.}
+\item{br.rates}{Numeric. Clock rates per branch. Can be a single value
+(strict clock) or a numeric vector of length equal to the number of
+branches in the tree, one rate per branch in the same order as
+\code{tree$edge}. Custom vectors of rates can be provided directly here,
+for example rates simulated using \code{simclock::relaxed.tree()}.}
 
-\item{root.state}{Define the root state at the start of the simulation.}
+\item{root.state}{Integer. The root state at the start of the simulation.
+Must be within the range of states implied by \code{k}.}
 
-\item{variable}{If `TRUE`, simulate only varying characters. Default is `FALSE`.}
+\item{variable}{Logical. If \code{TRUE}, simulate only varying characters
+(MkV model). Default is \code{FALSE}.}
 
-\item{full.states}{If `TRUE`, ensures that all character states specified by \code{k}
-are present in at least one tip for each trait. Default is `FALSE`.}
+\item{full.states}{Logical. If \code{TRUE}, ensures that all character
+states specified by \code{k} are present in at least one tip for each
+trait. Default is \code{FALSE}.}
 
-\item{parsimony}{If `"standard"`, retain only characters where at least two states
-each occur in two or more taxa; autapomorphic states are tolerated.
-If `"strict"`, every observed state must occur in two or more taxa, excluding
-characters with any autapomorphic states entirely. If `NULL`, no parsimony filter
-is applied. Default is `NULL`..}
+\item{parsimony}{Character. If \code{"standard"}, retain only characters
+where at least two states each occur in two or more taxa; autapomorphic
+states are tolerated. If \code{"strict"}, every observed state must occur
+in two or more taxa, excluding characters with any autapomorphic states
+entirely. If \code{NULL}, no parsimony filter is applied. Default is
+\code{NULL}.}
 
-\item{ACRV}{Among character rate variation using either `gamma`, `lgn`,`user`, or `NULL`.
-When `gamma` specified, rates will be drawn from the discretized gamma distribution. Must define
-number of categories (ACRV.ncats) and the shape of the distribution (alpha.gamma).
-When `lgn` specified, rates will be drawn from the discretized lognormal distribution.
-Must specify the mean (meanlog) and standard deviation (sdlog) of the distribution as well as the number of
-categories (ACRV.ncats). When `user` specified, the user can provide their own rates of evolution (define.ACRV.rates).
-When `NULL` specified all traits are simulated under the same rate. Default is `NULL`.}
+\item{ACRV}{Character. Among-character rate variation model. One of
+\code{"gamma"}, \code{"lgn"}, \code{"user"}, or \code{NULL}.
+\code{"gamma"} draws rates from a discretized gamma distribution (Yang
+1994); requires \code{ACRV.ncats} and \code{alpha.gamma}.
+\code{"lgn"} draws rates from a discretized lognormal distribution
+(Wagner 2012); requires \code{ACRV.ncats}, \code{meanlog}, and
+\code{sdlog}. \code{"user"} uses user-supplied rates via
+\code{define.ACRV.rates}. \code{NULL} simulates all traits under the
+same rate. Default is \code{NULL}.}
 
-\item{alpha.gamma}{Shape parameter \eqn{\alpha} for the gamma distribution. Default set to 1.}
+\item{alpha.gamma}{Numeric. Shape parameter \eqn{\alpha} for the gamma
+distribution. Default is 1.}
 
-\item{ACRV.ncats}{Number of rate categories for among character rate variation.}
+\item{ACRV.ncats}{Integer. Number of discrete rate categories for
+among-character rate variation.}
 
-\item{meanlog}{mean of the distribution on the log scale.}
+\item{meanlog}{Numeric. Mean of the lognormal distribution on the log
+scale. Required when \code{ACRV = "lgn"}.}
 
-\item{sdlog}{standard deviation of the distribution on the log scale}
+\item{sdlog}{Numeric. Standard deviation of the lognormal distribution on
+the log scale. Required when \code{ACRV = "lgn"}.}
 
-\item{define.ACRV.rates}{Vector of gamma rate categories for the simulation.}
+\item{define.ACRV.rates}{Numeric vector. User-supplied rate categories.
+Required when \code{ACRV = "user"}.}
 
-\item{ancestral}{If `TRUE`, return the states at all ancestral nodes. Default is `TRUE`.}
+\item{ancestral}{Logical. If \code{TRUE}, return the states at all
+ancestral nodes. Default is \code{TRUE}.}
 
-\item{fossil}{Fossil object (from `FossilSim`) to simulate morphological characters.}
+\item{fossil}{A fossil object from \code{FossilSim} to simulate
+morphological characters for sampled ancestors.}
 
-\item{define.Q}{Q matrix for simulation. Must be a square matrix and rows must sum to zero.}
+\item{define.Q}{Numeric matrix. A custom transition rate matrix Q for
+simulation. Must be square and rows must sum to zero.}
 }
 \value{
 An object of class `morpho`, with the following components:
@@ -107,11 +129,16 @@ An object of class `morpho`, with the following components:
 }
 }
 \description{
-This function simulates discrete character data along the branches of a phylogentic tree. It can be used with
-either a time tree or a tree with branch lengths in evolutionary distance. If using a time tree
-branch rates can be specified, either as one values for all branches or as a vector with
-different rates per branch. If no branch rates are specified a default of 0.1 is applied to
-all branches.
+This function simulates discrete character data along the branches of a
+phylogenetic tree using a continuous-time Markov chain. It implements the
+Mk model and its extensions (Lewis 2001), including among-character rate
+variation (ACRV) using discretized gamma distributions (Yang 1994) or
+lognormal distributions (Wagner 2012), following the implementation
+described in Capobianco and Hohna (2025). It can be used with either a
+time tree or a tree with branch lengths in evolutionary distance. If using
+a time tree, branch rates can be specified either as a single value for all
+branches or as a vector with different rates per branch. If no branch rates
+are specified a default of 0.1 is applied to all branches.
 }
 \examples{
 # simulated tree
@@ -148,4 +175,19 @@ morpho_data <- sim.morpho(tree = phy,
                           variable = TRUE,
                           ACRV.ncats = 4,
                          define.Q = ord_Q)
+}
+\references{
+Lewis, P.O. (2001) A likelihood approach to estimating phylogeny from
+discrete morphological character data. \emph{Systematic Biology} 50:913-925.
+
+Yang, Z. (1994) Maximum likelihood phylogenetic estimation from DNA
+sequences with variable rates over sites: approximate methods.
+\emph{Journal of Molecular Evolution} 39:306-314.
+
+Wagner, P.J. (2012) Modelling rate distributions using character
+compatibility: implications for morphological evolution among fossil
+invertebrates. \emph{Biology Letters} 8:143-146.
+
+Capobianco, A. and Hohna, S. (2025) On the MkV model with
+among-character rate variation. \emph{Systematic Biology}.
 }

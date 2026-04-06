@@ -17,7 +17,3 @@ A matrix with columns \code{parent} and \code{child} representing the path
 \description{
 Traverses the tree to determine the evolutionary path (branches) from root to a given tip.
 }
-\examples{
-phy <- ape::rtree(10)
-route_n <- find_path_to_tip(phy, "t2")
-}

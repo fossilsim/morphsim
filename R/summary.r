@@ -11,7 +11,11 @@
 #'   - \code{Statistics}: data.frame with CI and RI
 #'   - \code{Convergent_Traits}: data.frame listing convergent traits
 #'   - \code{Tree}: data.frame summarizing extant/extinct tips and sampled ancestors
+#' @importFrom phangorn phyDat CI RI
+#' @importFrom ape node.depth.edgelength
+#'
 #' @export
+#'
 #' @examples
 #' data(morpho_data)
 #'
@@ -75,10 +79,17 @@ stats.morpho <- function(data){
 #' Determines the number of convergently evolved traits
 #'
 #' @description
-#' Identifies which traits have evolved independently multiple times (convergent evolution) in a morpho object.
+#' Identifies which traits have evolved independently multiple times
+#' (convergent evolution) in a morpho object.
 #'
 #' @param data A morpho object
 #' @return A data.frame listing convergent traits, their state, and number of transitions
+#'
+#' @examples
+#' phy <- ape::rtree(10)
+#' morpho_data <- sim.morpho(tree = phy, k = 2, trait.num = 20)
+#' convergent_evol(morpho_data)
+#'
 #' @export
 convergent_evol <- function(data = NULL) {
 
@@ -171,10 +182,7 @@ convergent_evol <- function(data = NULL) {
 #' @param tree A phylogenetic tree of class \code{phylo}
 #' @param tip Tip label (character)
 #' @return A matrix with columns \code{parent} and \code{child} representing the path
-#' @export
-#' @examples
-#' phy <- ape::rtree(10)
-#' route_n <- find_path_to_tip(phy, "t2")
+#' @importFrom ape Ntip
 find_path_to_tip <- function(tree, tip) {
   # Ensure the tip is valid
   if (!tip %in% tree$tip.label) {
@@ -221,6 +229,8 @@ find_path_to_tip <- function(tree, tip) {
 #' @param y A `morpho` object.
 #'
 #' @return A combined `morpho` object.
+#'
+#' @importFrom phangorn RF.dist
 #' @export
 #'
 #' @examples
@@ -307,8 +317,11 @@ combine.morpho <- function(x, y) {
 
 #' Add reconstructed tree and matrix to morpho object
 #'
-#' @description Function to add the reconstructed tree and corresponding reconstructed
-#' matrix to an existing morpho object
+#' @description This function should be called if you want to access the
+#' reconstructed tree and character matrix directly from the morpho object.
+#' It adds the reconstructed tree in Newick format ($trees$Recon), containing
+#' only the sampled lineages, and a character matrix ($sequences$recon)
+#' containing only the taxa present in that reconstructed tree.
 #'
 #' @param data `morpho object` containing a fossil object
 #'
@@ -454,8 +467,8 @@ get.convergent <- function(data, trait = NULL) {
 #' @examples
 #' phy <- ape::rtree(10)
 #' morpho_data <- sim.morpho(tree = phy, k = 2, trait.num = 20)
-#' get.transition(morpho_data, trait = 2)
-
+#' get.transitions(morpho_data, trait = 2)
+#'
 get.transitions <- function(data, trait) {
   if (!is.morpho(data)) stop("Error: data must be a morpho object")
   if (trait > length(data$transition_history)) {
@@ -485,7 +498,7 @@ get.transitions <- function(data, trait) {
 #' @examples
 #' phy <- ape::rtree(10)
 #' morpho_data <- sim.morpho(tree = phy, k = 2, trait.num = 20)
-#' get.matrix(morpho_data, tseq)
+#' get.matrix(morpho_data, seq = "tips")
 
 get.matrix <- function(data, seq) {
   if (!is.morpho(data)) stop("Error: data must be a morpho object")

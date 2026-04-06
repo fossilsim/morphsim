@@ -21,5 +21,5 @@ Return data frame of morphological matrix
 \examples{
 phy <- ape::rtree(10)
 morpho_data <- sim.morpho(tree = phy, k = 2, trait.num = 20)
-get.matrix(morpho_data, tseq)
+get.matrix(morpho_data, seq = "tips")
 }

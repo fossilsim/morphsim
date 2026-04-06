@@ -22,5 +22,6 @@ including the root state.
 \examples{
 phy <- ape::rtree(10)
 morpho_data <- sim.morpho(tree = phy, k = 2, trait.num = 20)
-get.transition(morpho_data, trait = 2)
+get.transitions(morpho_data, trait = 2)
+
 }

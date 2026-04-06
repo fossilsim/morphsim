@@ -14,6 +14,8 @@
 #' @return
 #' No return value, called for its side effect of producing a plot.
 #'
+#' @importFrom ape write.tree
+#'
 #' @export
 #'
 #' @examples

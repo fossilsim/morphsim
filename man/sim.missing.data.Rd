@@ -20,19 +20,27 @@ sim.missing.data(
 
 \item{method}{Character. Method for removing data. Options:
 \itemize{
-  \item "random": removes characters randomly across the matrix.
-  \item "partition": removes characters by partition (probabilities per partition).
-  \item "rate": removes characters by rate category (probabilities per rate category).
-  \item "trait": removes characters from specific traits.
-  \item "taxa": removes characters from specific taxa.
-  \item "extinct": removes data from extinct taxa only. Note: This refers to characters from the tips.
+  \item \code{"random"}: removes characters randomly across the entire matrix.
+  \item \code{"partition"}: removes characters by partition
+  (one probability per partition).
+  \item \code{"rate"}: removes characters by rate category
+  (one probability per rate category, ordered from slowest to fastest).
+  \item \code{"trait"}: removes characters from specific traits across all taxa.
+  \item \code{"taxa"}: removes characters from specific taxa across all traits.
+  \item \code{"extinct"}: removes data from extinct taxa only.
+  Requires \code{seq = "tips"} as extinct taxa are only present at the tips of the tree.
+  \item \code{"trait_taxa"}: removes characters at the intersection of specific traits and
+    specific taxa, reflecting scenarios where certain anatomical regions are less likely
+    to be preserved in particular lineages.
 }}
 
 \item{probability}{Numeric. Probability of missing data (single value or vector depending on method).}
 
-\item{traits}{When method = "trait", indices of traits to remove.}
+\item{traits}{Integer vector. Indices of traits to remove. Required when
+\code{method = "trait"} or \code{method = "trait_taxa"}.}
 
-\item{taxa}{When method = "taxa", indices of taxa to remove.}
+\item{taxa}{Character vector. Names of taxa to remove data from. Required when
+\code{method = "taxa"} or \code{method = "trait_taxa"}.}
 }
 \value{
 An object of class morpho.
@@ -41,7 +49,7 @@ An object of class morpho.
 This function removes characters from a morphological matrix simulated using morphsim
 }
 \examples{
-#' # simulate a phylogenetic tree
+# simulate a phylogenetic tree
 phy <- ape::rtree(10)
 
 # simulate characters along the branches of the tree
@@ -74,18 +82,25 @@ missing.data <- sim.missing.data(data = morpho_data,
                                         seq = "tips",
                                         probability = c(0,0,0.2,1))
 
-# remove  characters from specific traits
+# remove characters from specific traits
 missing.data <- sim.missing.data(data = morpho_data,
                                  method = "trait",
                                  seq = "tips",
                                  probability = 1,
                                  traits = c(1,2,5))
 
-# remove  characters from specific taxa
+# remove characters from specific taxa
 missing.data <- sim.missing.data(data = morpho_data,
                                  method = "taxa",
                                  seq = "tips",
                                  probability = 1,
                                  taxa = c("t1", "t2"))
 
+# remove specific character traits from specific taxa
+missing.data <- sim.missing.data(data = morpho_data,
+                                 method = "trait_taxa",
+                                 seq = "tips",
+                                 probability = 0.8,
+                                 traits = c(1,2,5),
+                                 taxa = c("t1", "t2"))
 }
