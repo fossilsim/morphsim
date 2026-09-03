@@ -16,8 +16,3 @@ conventions used by \code{Morphsim} and \code{Fossilsim}
 \description{
 Match the sampled ancestor labels from \code{Morphsim} and \code{Fossilsim}
 }
-\examples{
-data(morpho_data)
-morphsim_fossilsim <- function(data = morpho_data)
-
-}

@@ -283,10 +283,6 @@ write.recon.tsv <- function (data, file, uncertainty = 0){
 #' A character matrix mapping sampled ancestor labels between the naming
 #' conventions used by \code{Morphsim} and \code{Fossilsim}
 #'
-#' @examples
-#' data(morpho_data)
-#' morphsim_fossilsim <- function(data = morpho_data)
-#'
 morphsim_fossilsim <- function (data = NULL){
 
 
