@@ -230,7 +230,7 @@ plot.morpho <- function(x = NULL,
       for (p in 1:length(b.cols[[2]])) {
         branch <- b.cols[[2]][p]                     # EvolTree row index (ape.branch)
         q <- which(data$fossil$ape.branch == branch)
-        
+        if (length(q) == 0) next
         fossil_pos <- if (length(q) > 1) min(data$fossil$hmin[q]) else data$fossil$hmin[q]
         
         tree.age    <- max(ape::node.depth.edgelength(data$trees$TimeTree))

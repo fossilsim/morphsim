@@ -376,6 +376,23 @@ sim.morpho <- function(tree = NULL,
   ### fossil object
   if (!is.null(fossil)) {
     f.morpho <- fossil
+    
+    # identify the root node: the node that never appears as a "child" in the edge matrix
+    root_node <- unique(tree.ordered$edge[, 1])
+    root_node <- root_node[!(root_node %in% tree.ordered$edge[, 2])][1]
+    
+    on_root <- which(f.morpho$edge == root_node)
+    if (length(on_root) > 0) {
+      warning(sprintf(
+        "%d fossil sampling event(s) found along the root edge were removed, 
+        as characters evolve from a root state.",
+        length(on_root)
+      ))
+      original_class <- class(f.morpho)
+      f.morpho <- f.morpho[-on_root, , drop = FALSE]
+      class(f.morpho) <- original_class
+    }
+    
     f.morpho$ape.branch <- NA
     f.morpho$specimen <- seq(1, length(f.morpho$sp))
 
