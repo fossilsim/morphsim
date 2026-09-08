@@ -226,6 +226,11 @@ sim.morpho <- function(tree = NULL,
     }
     tree$edge.length <- time.tree$edge.length * br.rates
   }
+  
+  # to help with plotting later
+  if (is.null(time.tree$root.edge)) {
+    time.tree$root.edge <- 0
+  }
 
   tree.ordered <- reorder(tree)
 
