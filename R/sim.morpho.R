@@ -472,7 +472,7 @@ sim.morpho <- function(tree = NULL,
   trees <- list(NA, NA, NA)
   names(trees) <- c("EvolTree", "TimeTree", "BrRates")
   trees[["EvolTree"]] <- tree.ordered
-  trees[["TimeTree"]] <- time.tree
+  trees[["TimeTree"]] <- reorder(time.tree)
   trees[["BrRates"]] <- br.rates
 
   model <- list(NA, NA, NA)

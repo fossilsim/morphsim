@@ -70,17 +70,19 @@ reconstruct.tree <- function(data) {
 
 
   for (rb in remaining) {
-    if (rb %in% fossil.branches) {
-      node <- tree$edge[rb, 2]
+    node  <- tree$edge[rb, 2]
+    ev_rb <- which(data$trees$EvolTree$edge[, 2] == node)
+    
+    if (ev_rb %in% fossil.branches) {
       path <- ape::nodepath(tree, from = node, to = ntips + 1)
-
+      
       # colour path
       edges <- which(tree$edge[, 2] %in% path)
       b.colours[edges] <- "black"
-
+      
       # store branches that correspond to fossil tips
       if (any(path <= ntips)) {
-        rem <- c(rem, rb)
+        rem <- c(rem, ev_rb)
       }
     }
   }
@@ -95,7 +97,7 @@ reconstruct.tree <- function(data) {
 
 
 #' Get reconstructed matrix
-#' @description This function returns the moprhological matrix for tips in the
+#' @description This function returns the morphological matrix for tips in the
 #' reconstructed tree.
 #'
 #' @param data A `morpho` object with fossil data
@@ -137,12 +139,11 @@ reconstruct.matrix <- function(data){
   if (length(reconSA) > 0){
 
     for (l in 1:length(reconSA)){
-      t_label <- which(data$trees$TimeTree$tip.label == reconSA[l])
-      b_num <- which(data$trees$TimeTree$edge[,2] == t_label)
+      t_label <- which(data$trees$EvolTree$tip.label == reconSA[l])
+      b_num   <- which(data$trees$EvolTree$edge[,2] == t_label)
       spec_min <- min(data$fossil$hmin[data$fossil$ape.branch == b_num])
-      spec_num <- data$fossil$specimen[ data$fossil$hmin == spec_min ]
+      spec_num <- data$fossil$specimen[data$fossil$hmin == spec_min]
       SA_tips <- rbind(SA_tips, c(paste0(spec_num, "_", b_num)))
-
       transformation[l,"Morphsim"] <- SA_tips[l]
       transformation[l,"Fossilsim"] <- reconSA[l]
     }
