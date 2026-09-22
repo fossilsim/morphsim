@@ -1,18 +1,22 @@
-citHeader("To cite MorphSim, please use:")
-
-# Main package citation
 bibentry(
-bibtype = "Manual",
-author = c(
-person("Laura", "Mulvey", email="[lauramulvey479@gmail.com](mailto:lauramulvey479@gmail.com)", role = c("aut", "cre")),
-person("Tim", "Brandler", role = "aut"),
-person("Alessio", "Capobianco", role = "aut"),
-person("Rachel", "Warnock", role = "aut"),
-person("Joëlle", "Barido-Sottani", role = "aut")
-),
-title = "MorphSim: Simulate Discrete Morphological Data along Phylogenetic Trees",
-year = "2025",
-version = "0.1.0",
-url = "https://github.com/fossilsim/morphsim",
-note = "R package for simulating discrete morphological data. Licensed under Apache-2.0."
+  bibtype  = "Article",
+  title    = "MorphSim: An R package for simulating discrete morphological data",
+  author   = c(
+    person("Laura", "Mulvey"),
+    person("Tim", "Brandler"),
+    person("Alessio", "Capobianco"),
+    person("Rachel", "Warnock"),
+    person("Joelle", "Barido-Sottani")
+  ),
+  journal  = "Methods in Ecology and Evolution",
+  year     = "2026",
+  volume   = "17",
+  pages    = "2018--2027",
+  doi      = "10.1111/2041-210X.70326",
+  textVersion = paste(
+    "Mulvey L, Brandler T, Capobianco A, Warnock R, Barido-Sottani J (2026).",
+    "MorphSim: An R package for simulating discrete morphological data.",
+    "Methods in Ecology and Evolution, 17, 2018-2027.",
+    "doi:10.1111/2041-210X.70326"
+  )
 )

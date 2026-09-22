@@ -10,7 +10,8 @@ Authors@R: c(person(given = "Laura", family = "Mulvey", role = c("aut", "cre", "
 Description: Tools to simulate morphological traits along phylogenetic trees
  with branch lengths representing evolutionary distance or time.
  Includes functions for visualizing evolutionary processes along trees
- and within morphological character matrices.
+ and within morphological character matrices. Methods are described in
+ Mulvey et al. (2026) <doi:10.1111/2041-210X.70326>.
 License: GPL-3
 Encoding: UTF-8
 RoxygenNote: 7.3.3

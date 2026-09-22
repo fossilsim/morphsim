@@ -226,16 +226,16 @@ sim.morpho <- function(tree = NULL,
     }
     tree$edge.length <- time.tree$edge.length * br.rates
   }
-  
+
   # to help with plotting later
-  if (is.null(time.tree$root.edge)) {
+  if (!is.null(time.tree) && is.null(time.tree$root.edge)) {
     time.tree$root.edge <- 0
   }
 
-  tree.ordered <- reorder(tree)
+  tree.ordered <- ape::reorder.phylo(tree)
 
   if (!is.null(time.tree)) {
-    time.tree.order <- reorder(time.tree)
+    time.tree.order <- ape::reorder.phylo(time.tree)
   } else {
     time.tree.order <- NULL
   }
@@ -381,15 +381,15 @@ sim.morpho <- function(tree = NULL,
   ### fossil object
   if (!is.null(fossil)) {
     f.morpho <- fossil
-    
+
     # identify the root node: the node that never appears as a "child" in the edge matrix
     root_node <- unique(tree.ordered$edge[, 1])
     root_node <- root_node[!(root_node %in% tree.ordered$edge[, 2])][1]
-    
+
     on_root <- which(f.morpho$edge == root_node)
     if (length(on_root) > 0) {
       warning(sprintf(
-        "%d fossil sampling event(s) found along the root edge were removed, 
+        "%d fossil sampling event(s) found along the root edge were removed,
         as characters evolve from a root state.",
         length(on_root)
       ))
@@ -397,7 +397,7 @@ sim.morpho <- function(tree = NULL,
       f.morpho <- f.morpho[-on_root, , drop = FALSE]
       class(f.morpho) <- original_class
     }
-    
+
     f.morpho$ape.branch <- NA
     f.morpho$specimen <- seq(1, length(f.morpho$sp))
 
@@ -494,7 +494,7 @@ sim.morpho <- function(tree = NULL,
   trees <- list(NA, NA, NA)
   names(trees) <- c("EvolTree", "TimeTree", "BrRates")
   trees[["EvolTree"]] <- tree.ordered
-  trees[["TimeTree"]] <- reorder(time.tree)
+  trees[["TimeTree"]] <- time.tree.order
   trees[["BrRates"]] <- br.rates
 
   model <- list(NA, NA, NA)

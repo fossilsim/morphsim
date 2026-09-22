@@ -10,6 +10,6 @@ reconstruct.matrix(data)
 \item{data}{A `morpho` object with fossil data}
 }
 \description{
-This function returns the moprhological matrix for tips in the
+This function returns the morphological matrix for tips in the
 reconstructed tree.
 }
