@@ -4,7 +4,14 @@
 \alias{write.morpho}
 \title{Write morpho data to file}
 \usage{
-write.morpho(data, file, type = "tree", reconstructed = FALSE, uncertainty = 0)
+write.morpho(
+  data,
+  file,
+  type = "tree",
+  all = FALSE,
+  reconstructed = FALSE,
+  uncertainty = 0
+)
 }
 \arguments{
 \item{data}{A morpho object}
@@ -12,6 +19,11 @@ write.morpho(data, file, type = "tree", reconstructed = FALSE, uncertainty = 0)
 \item{file}{File name}
 
 \item{type}{type to write: "tree", "matrix", or "ages"}
+
+\item{all}{Logical. If TRUE, write data for all sampled specimens (tips and
+sampled ancestor fossils) rather than just the tips. Applies to
+`type = "matrix"` and `type = "ages"`; cannot be combined with
+`reconstructed = TRUE`. Default FALSE.}
 
 \item{reconstructed}{If TRUE, write the reconstructed version. Default FALSE.}
 

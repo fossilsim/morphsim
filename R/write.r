@@ -9,6 +9,10 @@
 #' @param type type to write: "tree", "matrix", or "ages"
 #' @param reconstructed If TRUE, write the reconstructed version. Default FALSE.
 #' @param uncertainty Numeric. Age uncertainty for fossil ages. Default 0.
+#' @param all Logical. If TRUE, write data for all sampled specimens (tips and
+#'   sampled ancestor fossils) rather than just the tips. Applies to
+#'   `type = "matrix"` and `type = "ages"`; cannot be combined with
+#'   `reconstructed = TRUE`. Default FALSE.
 #'
 #' @return No return value, called for its side effect of writing data to a file.
 #'
@@ -21,11 +25,15 @@
 #' tmp <- tempfile(fileext = ".tre")
 #' write.morpho(morpho_data, file = tmp, type = "tree")
 #'
-write.morpho <- function(data, file, type = "tree",
+write.morpho <- function(data, file, type = "tree", all = FALSE,
                          reconstructed = FALSE, uncertainty = 0) {
 
   if (!is.morpho(data)) stop("Error: data must be a morpho object")
   if (is.null(file)) stop("Error: No file name specified")
+
+  if (all && reconstructed) {
+    stop("Error: `all = TRUE` cannot be combined with `reconstructed = TRUE`")
+  }
 
   if (type == "tree") {
     if (reconstructed) {
@@ -37,15 +45,17 @@ write.morpho <- function(data, file, type = "tree",
   } else if (type == "matrix") {
     if (reconstructed) {
       write.recon.matrix(data, file)
+    } else if (all) {
+      ape::write.nexus.data(c(data$sequences$tips, data$sequences$SA),
+                            file, format = "standard")
     } else {
       ape::write.nexus.data(data$sequences$tips, file, format = "standard")
     }
-
   } else if (type == "ages") {
     if (reconstructed) {
       write.recon.tsv(data, file, uncertainty)
     } else {
-      write.tsv(data, file, uncertainty)
+      write.tsv(data, file, uncertainty, all)
     }
 
   } else {
@@ -134,6 +144,8 @@ write.recon.matrix <- function (data, file = NULL) {
 #' @param uncertainty Numeric. Adds uncertainty to fossil ages in the morpho object.
 #'  The ages in the object are point estimates by default; setting `uncertainty`
 #'  will create an age range of ± this value (in millions of years).
+#' @param all Logical. If TRUE, also write the ages of internal nodes.
+#'  Internal node ages are written as point values (no uncertainty). Default FALSE.
 #'
 #' @return
 #' No return value, called for its side effect of writing data to a file.
@@ -144,7 +156,7 @@ write.recon.matrix <- function (data, file = NULL) {
 #' write.tsv(data = morpho_data, file = tmp)
 #'
 #' @export
-write.tsv <- function (data, file, uncertainty = 0) {
+write.tsv <- function (data, file, uncertainty = 0, all) {
 
   if (is.null(data) || !inherits(data, "morpho")) {
     stop("Error: `data` must be a morpho object.")
@@ -167,6 +179,33 @@ write.tsv <- function (data, file, uncertainty = 0) {
     } else {
       cat(data$trees$TimeTree$tip.label[i], (tip_ages[i] -  uncertainty) ,
           (tip_ages[i] + uncertainty), sep = "\t", file = file, append = T )
+      cat("\n", file = file, append = TRUE)
+    }
+  }
+
+  ## sampled ancestors
+
+  if (all) {
+    SA_labels <- names(data$sequences$SA)
+
+    for (i in 1:length(SA_labels)){
+
+      parts <- as.numeric(strsplit(SA_labels[i], "_")[[1]])
+      specimen_num <- parts[1]
+      branch_num   <- parts[2]
+
+      # Subset the data frame to get hmin
+      hmin <- data$fossil$hmin[data$fossil$ape.branch == branch_num &
+                                 data$fossil$specimen  == specimen_num]
+
+      nm <- SA_labels[i]
+      if (hmin - uncertainty < 0){
+        min_age <- 0
+      } else {
+        min_age <- hmin - uncertainty
+      }
+      cat(nm, min_age, (hmin + uncertainty),
+          sep = "\t", file = file, append = T )
       cat("\n", file = file, append = TRUE)
     }
   }
@@ -225,7 +264,7 @@ write.recon.tsv <- function (data, file, uncertainty = 0){
 
   for ( i in 1:length(reconTreeTips)){
     ord <-  which(data$trees$TimeTree$tip.label ==reconTreeTips[i])
-    
+
     if (length(ord) == 0) {
       ed <- which(data$trees$EvolTree$edge[, 2] == as.numeric(sub("t", "", reconTreeTips[i])))
       tip_ages <- round(min(data$fossil$hmin[data$fossil$ape.branch == ed]), 3)

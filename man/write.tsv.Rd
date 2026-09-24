@@ -4,7 +4,7 @@
 \alias{write.tsv}
 \title{Write the taxa ages}
 \usage{
-write.tsv(data, file, uncertainty = 0)
+write.tsv(data, file, uncertainty = 0, all)
 }
 \arguments{
 \item{data}{Morpho object}
@@ -14,6 +14,9 @@ write.tsv(data, file, uncertainty = 0)
 \item{uncertainty}{Numeric. Adds uncertainty to fossil ages in the morpho object.
 The ages in the object are point estimates by default; setting `uncertainty`
 will create an age range of ± this value (in millions of years).}
+
+\item{all}{Logical. If TRUE, also write the ages of internal nodes.
+Internal node ages are written as point values (no uncertainty). Default FALSE.}
 }
 \value{
 No return value, called for its side effect of writing data to a file.
