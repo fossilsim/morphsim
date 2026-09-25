@@ -9,10 +9,8 @@
 #' @param type type to write: "tree", "matrix", or "ages"
 #' @param reconstructed If TRUE, write the reconstructed version. Default FALSE.
 #' @param uncertainty Numeric. Age uncertainty for fossil ages. Default 0.
-#' @param all Logical. If TRUE, write data for all sampled specimens (tips and
-#'   sampled ancestor fossils) rather than just the tips. Applies to
-#'   `type = "matrix"` and `type = "ages"`; cannot be combined with
-#'   `reconstructed = TRUE`. Default FALSE.
+#' @param all Logical. If TRUE, write data for all sampled specimens. Applies to
+#'   `type = "matrix"` and `type = "ages"` Default FALSE.
 #'
 #' @return No return value, called for its side effect of writing data to a file.
 #'
@@ -31,9 +29,7 @@ write.morpho <- function(data, file, type = "tree", all = FALSE,
   if (!is.morpho(data)) stop("Error: data must be a morpho object")
   if (is.null(file)) stop("Error: No file name specified")
 
-  if (all && reconstructed) {
-    stop("Error: `all = TRUE` cannot be combined with `reconstructed = TRUE`")
-  }
+
 
   if (type == "tree") {
     if (reconstructed) {
@@ -44,7 +40,7 @@ write.morpho <- function(data, file, type = "tree", all = FALSE,
 
   } else if (type == "matrix") {
     if (reconstructed) {
-      write.recon.matrix(data, file)
+      write.recon.matrix(data, file, all)
     } else if (all) {
       ape::write.nexus.data(c(data$sequences$tips, data$sequences$SA),
                             file, format = "standard")
@@ -53,7 +49,7 @@ write.morpho <- function(data, file, type = "tree", all = FALSE,
     }
   } else if (type == "ages") {
     if (reconstructed) {
-      write.recon.tsv(data, file, uncertainty)
+      write.recon.tsv(data, file, uncertainty, all)
     } else {
       write.tsv(data, file, uncertainty, all)
     }
@@ -106,6 +102,9 @@ write.recon.tree <- function (data = NULL, file = NULL) {
 #'
 #' @param data Morpho object
 #' @param file File name
+#' @param all Logical. If TRUE, the sequences of all sampled ancestors in the
+#'  reconstructed tree are written, not just the first on each lineage.
+#'  Default FALSE.
 #'
 #' @return
 #' No return value, called for its side effect of writing data to a file.
@@ -117,7 +116,7 @@ write.recon.tree <- function (data = NULL, file = NULL) {
 #'
 #' @export
 #'
-write.recon.matrix <- function (data, file = NULL) {
+write.recon.matrix <- function (data, file = NULL, all) {
 
   if (is.null(data) || !inherits(data, "morpho")) {
     stop("Error: `data` must be a morpho object.")
@@ -128,9 +127,22 @@ write.recon.matrix <- function (data, file = NULL) {
 
 
   mat <- reconstruct.matrix(data)
+
+  ## all sampled ancestors not already in the reconstructed matrix
+  ## remaining sampled ancestors (_3, _4, ...), renamed to match the tree
+  if (all) {
+    extra <- morphsim_fossilsim(data, all = TRUE)
+    extra <- extra[!(extra[, "Fossilsim"] %in% names(mat)), , drop = FALSE]
+    if (nrow(extra) > 0) {
+      extra_seqs <- data$sequences$SA[extra[, "Morphsim"]]
+      names(extra_seqs) <- extra[, "Fossilsim"]
+      mat <- c(mat, extra_seqs)
+    }
+  }
+
   ape::write.nexus.data(mat, file = file, format = "standard")
 
-  }
+}
 
 
 #' Write the taxa ages
@@ -222,6 +234,9 @@ write.tsv <- function (data, file, uncertainty = 0, all) {
 #' @param uncertainty Numeric. Adds uncertainty to fossil ages in the morpho object.
 #'  The ages in the object are point estimates by default; setting `uncertainty`
 #'  will create an age range of ± this value (in millions of years).
+#' @param all Logical. If TRUE, the ages of all sampled ancestors in the
+#'  reconstructed tree are written, not just the first on each lineage.
+#'  Default FALSE.
 #'
 #' @return
 #' No return value, called for its side effect of writing data to a file.
@@ -233,7 +248,7 @@ write.tsv <- function (data, file, uncertainty = 0, all) {
 #'
 #' @export
 
-write.recon.tsv <- function (data, file, uncertainty = 0){
+write.recon.tsv <- function (data, file, uncertainty = 0, all){
 
   if (is.null(data) || !inherits(data, "morpho")) {
     stop("Error: `data` must be a morpho object.")
@@ -247,7 +262,7 @@ write.recon.tsv <- function (data, file, uncertainty = 0){
   r_tree <- FossilSim::reconstructed.tree.fossils.objects(fossils  = data$fossil,
                                                           tree = data$trees$TimeTree,
                                                           tip_order = "youngest_first")
-  transformations <- morphsim_fossilsim(data)
+  transformations <- morphsim_fossilsim(data, all = all)
 
   cat("taxon", "min_age", "max_age", sep = "\t", "\n", file = file)
 
@@ -290,32 +305,32 @@ write.recon.tsv <- function (data, file, uncertainty = 0){
           sep = "\t", file = file, append = T )
       cat("\n", file = file, append = TRUE)
 
+     }
     }
-  }
 
   ## sampled ancestors
 
-  if (length(transformations[,"Morphsim"]) > 0){
-    for (i in 1:length(transformations[,1])){
+  ## sampled ancestors (_2 only, or _2, _3, ... if all = TRUE)
 
-      parts <- as.numeric(strsplit(transformations[i, "Morphsim"], "_")[[1]])
-      specimen_num <- parts[1]
-      branch_num   <- parts[2]
+  for (i in seq_len(nrow(transformations))){
 
-      # Subset the data frame to get hmin
-      hmin <- data$fossil$hmin[data$fossil$ape.branch == branch_num &
-                                 data$fossil$specimen  == specimen_num]
+    parts <- as.numeric(strsplit(transformations[i, "Morphsim"], "_")[[1]])
+    specimen_num <- parts[1]
+    branch_num   <- parts[2]
 
-      nm <- paste0(transformations[i, "Fossilsim"], "_2")
-      if (hmin - uncertainty < 0){
-        min_age <- 0
-      } else {
-        min_age <- hmin - uncertainty
-      }
-      cat(nm,min_age, (hmin + uncertainty),
-          sep = "\t", file = file, append = T )
-      cat("\n", file = file, append = TRUE)
+    # Subset the data frame to get hmin
+    hmin <- data$fossil$hmin[data$fossil$ape.branch == branch_num &
+                               data$fossil$specimen  == specimen_num]
+
+    nm <- transformations[i, "Fossilsim"]
+    if (hmin - uncertainty < 0){
+      min_age <- 0
+    } else {
+      min_age <- hmin - uncertainty
     }
+    cat(nm,min_age, (hmin + uncertainty),
+        sep = "\t", file = file, append = T )
+    cat("\n", file = file, append = TRUE)
   }
 }
 
@@ -324,49 +339,66 @@ write.recon.tsv <- function (data, file, uncertainty = 0){
 #' @description
 #' Match the sampled ancestor labels from \code{Morphsim} and \code{Fossilsim}
 #' @param data Morpho object containing fossils
+#' @param all Logical. If FALSE, match only the sampled ancestors that appear as
+#'  \code{_2} tips in the reconstructed tree. If TRUE, match every fossil that
+#'  is not already a tip of the reconstructed tree. Default FALSE.
 #' @return
 #' A character matrix mapping sampled ancestor labels between the naming
-#' conventions used by \code{Morphsim} and \code{Fossilsim}
+#' conventions used by \code{Morphsim} (specimen_branch) and \code{Fossilsim}
+#' (lineage and sample number, e.g. "t3_2")
 #'
-morphsim_fossilsim <- function (data = NULL){
-
+morphsim_fossilsim <- function (data = NULL, all = FALSE){
 
   if(is.null(data$fossil)) stop("Error: Morpho object does not contian fossils")
 
   r_tree <- FossilSim::reconstructed.tree.fossils.objects(fossils  = data$fossil,
                                                           tree = data$trees$TimeTree,
                                                           tip_order =  "youngest_first")
-  SA_tips <- c()
   tps <- unname(r_tree$tree$tip.label)
-  matches <- grepl("_1$", tps )
-  # Extract elements that match
-  reconTreeTips <- gsub("_1$", "", tps[matches])
 
-  ## add these tip labels to the file + plus all sampled ancestor
-  seq_tips <- which(names(data$sequences$tips) %in% reconTreeTips)
+  tree        <- data$trees$TimeTree
+  ntips       <- length(tree$tip.label)
+  depths      <- ape::node.depth.edgelength(tree)
+  tree_height <- max(depths)
 
-  matches <- grepl("_2$", tps )
-  reconSA <-  gsub("_2$", "", tps[matches])
+  ## node each fossil sits above
+  fos <- data$fossil
+  fos$node  <- data$trees$EvolTree$edge[fos$ape.branch, 2]
+  fos$label <- NA_character_
 
-  transformation <- matrix(ncol = 2, nrow = length(reconSA))
-  colnames(transformation) <- c("Morphsim", "Fossilsim")
-  if (length(reconSA) > 0){
+  ## name every fossil: lineage + sample number (youngest first)
+  for (nd in unique(fos$node)) {
+    rows <- which(fos$node == nd)
+    rows <- rows[order(fos$hmin[rows])]
 
-    for (l in 1:length(reconSA)){
-      t_label <- which(data$trees$TimeTree$tip.label == reconSA[l])
-      b_num <- which(data$trees$TimeTree$edge[,2] == t_label)
-      spec_min <- min(data$fossil$hmin[data$fossil$ape.branch == b_num])
-      spec_num <- data$fossil$specimen[ data$fossil$hmin == spec_min ]
-      SA_tips <- rbind(SA_tips, c(paste0(spec_num, "_", b_num)))
-
-      transformation[l,"Morphsim"] <- SA_tips[l]
-      transformation[l,"Fossilsim"] <- reconSA[l]
+    if (nd <= ntips) {
+      ## lineage ending in a tip of the true tree
+      lineage <- tree$tip.label[nd]
+      extant  <- round(abs(tree_height - depths[nd]), 3) == 0
+      ## extant tip is _1, unless it's already in the fossil table at hmin 0
+      if (extant && !any(fos$hmin[rows] == 0)) {
+        offset <- 1
+      } else {
+        offset <- 0
+      }
+    } else {
+      ## lineage not ending in a tip: _1 is its youngest fossil
+      lineage <- paste0("t", nd)
+      offset  <- 0
     }
+    fos$label[rows] <- paste0(lineage, "_", seq_along(rows) + offset)
   }
-   return(transformation)
+
+  if (all) {
+    ## every fossil that isn't a _1 tip of the reconstructed tree
+    keep <- !(fos$label %in% tps[grepl("_1$", tps)])
+  } else {
+    ## only _2 sampled ancestors that are in the reconstructed tree (old behaviour)
+    keep <- fos$label %in% tps & grepl("_2$", fos$label)
+  }
+
+  transformation <- cbind(Morphsim  = paste0(fos$specimen, "_", fos$ape.branch)[keep],
+                          Fossilsim = fos$label[keep])
+  return(transformation)
 }
-
-
-
-
 

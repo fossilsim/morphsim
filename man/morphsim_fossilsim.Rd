@@ -4,14 +4,19 @@
 \alias{morphsim_fossilsim}
 \title{Match sampled ancestor labels}
 \usage{
-morphsim_fossilsim(data = NULL)
+morphsim_fossilsim(data = NULL, all = FALSE)
 }
 \arguments{
 \item{data}{Morpho object containing fossils}
+
+\item{all}{Logical. If FALSE, match only the sampled ancestors that appear as
+\code{_2} tips in the reconstructed tree. If TRUE, match every fossil that
+is not already a tip of the reconstructed tree. Default FALSE.}
 }
 \value{
 A character matrix mapping sampled ancestor labels between the naming
-conventions used by \code{Morphsim} and \code{Fossilsim}
+conventions used by \code{Morphsim} (specimen_branch) and \code{Fossilsim}
+(lineage and sample number, e.g. "t3_2")
 }
 \description{
 Match the sampled ancestor labels from \code{Morphsim} and \code{Fossilsim}

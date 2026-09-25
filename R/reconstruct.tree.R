@@ -72,14 +72,14 @@ reconstruct.tree <- function(data) {
   for (rb in remaining) {
     node  <- tree$edge[rb, 2]
     ev_rb <- which(data$trees$EvolTree$edge[, 2] == node)
-    
+
     if (ev_rb %in% fossil.branches) {
       path <- ape::nodepath(tree, from = node, to = ntips + 1)
-      
+
       # colour path
       edges <- which(tree$edge[, 2] %in% path)
       b.colours[edges] <- "black"
-      
+
       # store branches that correspond to fossil tips
       if (any(path <= ntips)) {
         rem <- c(rem, ev_rb)
@@ -182,5 +182,4 @@ reconstruct.matrix <- function(data){
   return(total_tips)
 
 }
-
 

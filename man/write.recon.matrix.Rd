@@ -4,12 +4,16 @@
 \alias{write.recon.matrix}
 \title{Write reconstructed character matrix to file}
 \usage{
-write.recon.matrix(data, file = NULL)
+write.recon.matrix(data, file = NULL, all)
 }
 \arguments{
 \item{data}{Morpho object}
 
 \item{file}{File name}
+
+\item{all}{Logical. If TRUE, the sequences of all sampled ancestors in the
+reconstructed tree are written, not just the first on each lineage.
+Default FALSE.}
 }
 \value{
 No return value, called for its side effect of writing data to a file.

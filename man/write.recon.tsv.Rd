@@ -4,7 +4,7 @@
 \alias{write.recon.tsv}
 \title{Write the taxa ages of reconstructed tree}
 \usage{
-write.recon.tsv(data, file, uncertainty = 0)
+write.recon.tsv(data, file, uncertainty = 0, all)
 }
 \arguments{
 \item{data}{Morpho object}
@@ -14,6 +14,10 @@ write.recon.tsv(data, file, uncertainty = 0)
 \item{uncertainty}{Numeric. Adds uncertainty to fossil ages in the morpho object.
 The ages in the object are point estimates by default; setting `uncertainty`
 will create an age range of ± this value (in millions of years).}
+
+\item{all}{Logical. If TRUE, the ages of all sampled ancestors in the
+reconstructed tree are written, not just the first on each lineage.
+Default FALSE.}
 }
 \value{
 No return value, called for its side effect of writing data to a file.
