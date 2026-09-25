@@ -32,8 +32,8 @@ write.morpho <- function(data, file, type = "tree", all = FALSE,
 
 
   if (type == "tree") {
-    if (reconstructed) {
-      write.recon.tree(data, file)
+    if (all) {
+      write.recon.tree(data, file,  all, reconstructed)
     } else {
       ape::write.tree(data$trees$EvolTree, file)
     }
@@ -77,22 +77,62 @@ write.morpho <- function(data, file, type = "tree", all = FALSE,
 #' tmp <- tempfile(fileext = ".tre")
 #' write.recon.tree(data = morpho_data, file = tmp)
 #'
-#' @export
 #'
-write.recon.tree <- function (data = NULL, file = NULL) {
+write.recon.tree <- function(data = NULL, file = NULL, all = TRUE, reconstructed = TRUE) {
 
   if (is.null(data) || !inherits(data, "morpho")) {
     stop("Error: `data` must be a morpho object.")
   }
-
   if (is.null(file)) stop("Error: No file name specified")
+  if (is.null(data$fossil)) {
+    stop("Error: Cannot reconstruct tree as no fossil data in morpho object")
+  }
 
-  if(is.null(data$fossil)) stop ("Error: Cannot reconstruct tree as no fossil data in morpho object")
+  tt  <- data$trees$TimeTree
+  fos <- data$fossil
 
-  r_tree <- FossilSim::reconstructed.tree.fossils.objects(fossils  = data$fossil,
-                                                          tree = data$trees$TimeTree,
-                                                          tip_order = "youngest_first")
-  ape::write.tree(r_tree$tree, file = file)
+  # separate extant samples (age 0) from real fossils
+  is_extant <- fos$hmax < 1e-8
+
+  if (!reconstructed) {
+    # complete time tree with all fossils attached as SAs / fossil tips
+    fos_only <- if (any(is_extant)) FossilSim::as.fossils(fos[!is_extant, ]) else fos
+    w_tree <- FossilSim::SAtree.from.fossils(tt, fos_only,
+                                             tip_order = "youngest_first")$tree
+
+  } else if (all) {
+
+    if (any(is_extant)) {
+      # extant sampling was simulated: keep only those extant species
+      extant_sampled <- tt$tip.label[fos$sp[is_extant]]
+      fos_only <- FossilSim::as.fossils(fos[!is_extant, ])
+
+      tr <- FossilSim::SAtree.from.fossils(tt, fos_only,
+                                           tip_order = "youngest_first")$tree
+
+      d        <- ape::node.depth.edgelength(tr)
+      tip_ages <- max(d) - d[1:ape::Ntip(tr)]
+
+      extant_labels <- tr$tip.label[tip_ages < 1e-6]
+      species       <- sub("_[0-9]+$", "", extant_labels)
+      sampled_tips  <- extant_labels[species %in% extant_sampled]
+
+      w_tree <- FossilSim::sampled.tree.from.combined(tr,
+                                                      sampled_tips = sampled_tips)
+    } else {
+      # no extant sampling simulated: keep all extant tips
+      tr <- FossilSim::SAtree.from.fossils(tt, fos,
+                                           tip_order = "youngest_first")$tree
+      w_tree <- FossilSim::sampled.tree.from.combined(tr, rho = 1)
+    }
+
+  } else {
+    w_tree <- FossilSim::reconstructed.tree.fossils.objects(fossils = fos,
+                                                            tree = tt,
+                                                            tip_order = "youngest_first")$tree
+  }
+
+  ape::write.tree(w_tree, file = file)
 }
 
 #' Write reconstructed character matrix to file

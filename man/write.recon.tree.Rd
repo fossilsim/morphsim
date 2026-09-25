@@ -4,7 +4,7 @@
 \alias{write.recon.tree}
 \title{Write reconstructed tree to file}
 \usage{
-write.recon.tree(data = NULL, file = NULL)
+write.recon.tree(data = NULL, file = NULL, all = TRUE, reconstructed = TRUE)
 }
 \arguments{
 \item{data}{Morpho object}
@@ -21,5 +21,6 @@ Write the reconstructed tree to Newick string
 data(morpho_data)
 tmp <- tempfile(fileext = ".tre")
 write.recon.tree(data = morpho_data, file = tmp)
+
 
 }
