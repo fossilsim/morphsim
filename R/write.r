@@ -42,7 +42,13 @@ write.morpho <- function(data, file, type = "tree", all = FALSE,
     if (reconstructed) {
       write.recon.matrix(data, file, all)
     } else if (all) {
-      ape::write.nexus.data(c(data$sequences$tips, data$sequences$SA),
+      SA <- data$sequences$SA
+      if (!is.null(data$fossil)) {
+        # drop extant samples (age 0): already written as tips
+        ext_ids <- with(data$fossil, paste0(specimen, "_", ape.branch)[hmax < 1e-8])
+        SA <- SA[!names(SA) %in% ext_ids]
+      }
+      ape::write.nexus.data(c(data$sequences$tips, SA),
                             file, format = "standard")
     } else {
       ape::write.nexus.data(data$sequences$tips, file, format = "standard")
@@ -239,6 +245,9 @@ write.tsv <- function (data, file, uncertainty = 0, all) {
 
   if (all) {
     SA_labels <- names(data$sequences$SA)
+
+    ext_ids   <- with(data$fossil, paste0(specimen, "_", ape.branch)[hmax < 1e-8])
+    SA_labels <- setdiff(names(data$sequences$SA), ext_ids)
 
     for (i in 1:length(SA_labels)){
 
