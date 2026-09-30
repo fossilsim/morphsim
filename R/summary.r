@@ -265,7 +265,6 @@ combine.morpho <- function(x, y) {
   if (!identical(x$fossil, y$fossil)) stop("Error: morpho objects have different fossil objects")
   if (!phangorn::RF.dist(x$trees$EvolTree,
                          y$trees$EvolTree) == 0) stop("Error: morpho objects have different trees")
-  if (!identical(x$trees$BrRates, y$trees$BrRate)) stop("Error: morpho objects have different branch lengths")
 
   combined_tips <- list()
   tip_names <- names(x$sequences$tips)
@@ -297,7 +296,7 @@ combine.morpho <- function(x, y) {
     trees = list(
       EvolTree = x$trees$EvolTree,
       TimeTree = x$trees$TimeTree,
-      BrRates  = x$trees$BrRates
+      BrRates  = c(x$trees$BrRates, y$trees$BrRates)
     ),
     model = list(
       Specified    = c(x$model$Specified, y$model$Specified),
